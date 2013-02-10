@@ -1,1 +1,6 @@
 # Hello, Polyglots
+
+1. `pip install -r requirements.txt`
+2. `python scrape_most_watched_repos.py`
+3. ???
+4. Profit!
