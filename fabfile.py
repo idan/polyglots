@@ -1,4 +1,5 @@
 import json
+import os
 from pyquery import PyQuery as pq
 from collections import OrderedDict
 
@@ -41,7 +42,10 @@ def clone_lang(lang, repos):
     for r in repos:
         user, reponame = r.split('/')
         repopath = 'repos/{}/{}'.format(lang, user)
-        print(repopath)
+        if os.path.exists(os.path.join(os.getcwd(), repopath)):
+            print('Skipping {}...'.format(r))
+            continue
+        print('Cloning {}'.format(r))
         local('mkdir -p {}'.format(repopath))
         with lcd(repopath):
             local('git clone https://github.com/{}.git'.format(r))
@@ -54,6 +58,3 @@ def clone():
         languages = OrderedDict(json.load(fp))
     for lang, repos in languages.items():
         clone_lang(lang, repos)
-
-
-
