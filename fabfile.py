@@ -31,19 +31,29 @@ def scrape():
             repos.extend([a.attrib['href'].lstrip('/') for a in d('h3>a')])
 
     with open('most_watched_repos.json', 'w') as fp:
-        json.dump(languages, fp)
+        json.dump(languages.items(), fp, indent=4)
 
-@task()
-def clone(lang):
+
+def clone_lang(lang, repos):
     """ Clone the most-watched repos for a given language """
+    print('Cloning {} repositories...'.format(lang))
     local('mkdir -p repos/{}'.format(lang))
-    with open('most_watched_repos.json', 'r') as fp:
-        repos = json.load(fp)
-    for r in repos[lang]:
+    for r in repos:
         user, reponame = r.split('/')
         repopath = 'repos/{}/{}'.format(lang, user)
+        print(repopath)
         local('mkdir -p {}'.format(repopath))
         with lcd(repopath):
             local('git clone https://github.com/{}.git'.format(r))
+
+
+@task()
+def clone():
+    """ Clone the most-watched repos for all languages """
+    with open('most_watched_repos.json', 'r') as fp:
+        languages = OrderedDict(json.load(fp))
+    for lang, repos in languages.items():
+        clone_lang(lang, repos)
+
 
 
