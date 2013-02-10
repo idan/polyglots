@@ -1,3 +1,4 @@
+dulwich==0.8.7
 Fabric==1.5.3
 pyquery==1.2.4
 requests==1.1.0
