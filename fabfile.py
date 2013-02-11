@@ -42,7 +42,7 @@ def clone_lang(lang, repos):
     for r in repos:
         user, reponame = r.split('/')
         userpath = 'repos/{}/{}'.format(lang, user)
-        repopath = '#{userpath}/{#reponame}'
+        repopath = '{}/{}'.format(userpath, reponame)
         if os.path.exists(os.path.join(os.getcwd(), repopath)):
             print('Skipping {}...'.format(r))
             continue
