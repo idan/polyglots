@@ -41,13 +41,14 @@ def clone_lang(lang, repos):
     local('mkdir -p repos/{}'.format(lang))
     for r in repos:
         user, reponame = r.split('/')
-        repopath = 'repos/{}/{}'.format(lang, user)
+        userpath = 'repos/{}/{}'.format(lang, user)
+        repopath = '#{userpath}/{#reponame}'
         if os.path.exists(os.path.join(os.getcwd(), repopath)):
             print('Skipping {}...'.format(r))
             continue
         print('Cloning {}'.format(r))
-        local('mkdir -p {}'.format(repopath))
-        with lcd(repopath):
+        local('mkdir -p {}'.format(userpath))
+        with lcd(userpath):
             local('git clone https://github.com/{}.git'.format(r))
 
 
