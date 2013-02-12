@@ -97,7 +97,7 @@ def prune_lang(lang, repos):
         else:
             subdirs = path.listdir(names_only=True)
             to_delete = set(subdirs) - set(repos)
-            if to_delete:
-                print("To delete: {}".format(to_delete))
+            for d in to_delete:
+                print("To delete: {}/{}".format(user, to_delete))
 
 
