@@ -1,5 +1,6 @@
 import json
 import os
+from unipath import Path, DIRS
 from pyquery import PyQuery as pq
 from collections import OrderedDict
 
@@ -35,6 +36,34 @@ def scrape():
         json.dump(languages.items(), fp, indent=4)
 
 
+@task()
+def clone(lang=None):
+    """ Clone the most-watched repos for all or some languages """
+    do(clone_lang, lang)
+
+
+@task()
+def prune(lang=None):
+    """ Prune repos that aren't in the most-watched list anymore """
+    do(prune_lang, lang)
+
+
+
+def load_repos():
+    with open('most_watched_repos.json', 'r') as fp:
+        languages = OrderedDict(json.load(fp))
+    return languages
+
+
+def do(func, lang=None):
+    """ Do something with some or all repos """
+    languages = load_repos()
+    if lang and lang in languages:
+        func(lang, languages[lang])
+    for lang, repos in languages.items():
+        func(lang, repos)
+
+
 def clone_lang(lang, repos):
     """ Clone the most-watched repos for a given language """
     print('Cloning {} repositories...'.format(lang))
@@ -52,10 +81,23 @@ def clone_lang(lang, repos):
             local('git clone https://github.com/{}.git'.format(r))
 
 
-@task()
-def clone():
-    """ Clone the most-watched repos for all languages """
-    with open('most_watched_repos.json', 'r') as fp:
-        languages = OrderedDict(json.load(fp))
-    for lang, repos in languages.items():
-        clone_lang(lang, repos)
+def prune_lang(lang, repos):
+    print('Pruning {} repositories...'.format(lang))
+    usermap = {}
+    for r in repos:
+        user, reponame = r.split('/')
+        if user in usermap:
+            usermap[user].append(reponame)
+        else:
+            usermap[user] = [reponame]
+    for user, repos in usermap.items():
+        path = Path('repos/{}/{}'.format(lang, user))
+        if not path.exists():
+            continue
+        else:
+            subdirs = path.listdir(names_only=True)
+            to_delete = set(subdirs) - set(repos)
+            if to_delete:
+                print("To delete: {}".format(to_delete))
+
+
