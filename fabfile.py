@@ -47,7 +47,10 @@ def prune(lang=None):
     """ Prune repos that aren't in the most-watched list anymore """
     do(prune_lang, lang)
 
-
+@task()
+def verify(lang=None):
+    """ Verify that repos have been downloaded """
+    do(verify_lang, lang)
 
 def load_repos():
     with open('most_watched_repos.json', 'r') as fp:
@@ -80,6 +83,18 @@ def clone_lang(lang, repos):
         with lcd(userpath):
             local('git clone https://github.com/{}.git'.format(r))
 
+
+def verify_lang(lang, repos):
+    """ Verify the most-watched repos for a given language """
+    print('Verifying {} repositories...'.format(lang))
+    for r in repos:
+        user, reponame = r.split('/')
+        userpath = 'repos/{}/{}'.format(lang, user)
+        repopath = '{}/{}'.format(userpath, reponame)
+        if os.path.exists(os.path.join(os.getcwd(), repopath)):
+            continue
+        else:
+            print('Missing {}'.format(r))
 
 def prune_lang(lang, repos):
     print('Pruning {} repositories...'.format(lang))
