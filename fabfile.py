@@ -1,4 +1,5 @@
 import json
+import os
 from collections import OrderedDict
 
 from unipath import Path
@@ -6,6 +7,8 @@ from pyquery import PyQuery as pq
 from dulwich.repo import Repo
 from dulwich.errors import NotGitRepository
 from fabric.api import task, local, lcd
+
+REPOS_PATH = Path(os.environ['POLYGLOTS_REPOS'])
 
 
 @task()
@@ -74,11 +77,12 @@ def do(func, lang=None):
 def clone_lang(lang, repos):
     """ Clone the most-watched repos for a given language """
     print('*** Cloning {} repositories...'.format(lang))
-    local('mkdir -p repos/{}'.format(lang))
+    langpath = REPOS_PATH.child(lang)
+    local('mkdir -p {}'.format(langpath))
     for r in repos:
         user, reponame = r.split('/')
-        userpath = Path('repos', lang, user)
-        repopath = Path('repos', lang, user, reponame)
+        userpath = langpath.child(user)
+        repopath = userpath.child(reponame)
         if repopath.exists():
             print('Skipping {}...'.format(r))
             continue
@@ -93,7 +97,7 @@ def verify_lang(lang, repos):
     print('*** Verifying {} repositories...'.format(lang))
     for r in repos:
         user, reponame = r.split('/')
-        path = Path('repos', lang, user, reponame)
+        path = REPOS_PATH.child(lang, user, reponame)
         if not path.exists():
             print('Missing: {}'.format(r))
             continue
@@ -113,7 +117,7 @@ def prune_lang(lang, repos):
         else:
             usermap[user] = [reponame]
     for user, repos in usermap.items():
-        path = Path('repos', lang, user)
+        path = REPOS_PATH.child(lang, user)
         if not path.exists():
             continue
         else:
