@@ -1,10 +1,12 @@
 import json
-import os
-from unipath import Path, DIRS
-from pyquery import PyQuery as pq
 from collections import OrderedDict
 
+from unipath import Path
+from pyquery import PyQuery as pq
+from dulwich.repo import Repo
+from dulwich.errors import NotGitRepository
 from fabric.api import task, local, lcd
+
 
 @task()
 def scrape():
@@ -47,10 +49,12 @@ def prune(lang=None):
     """ Prune repos that aren't in the most-watched list anymore """
     do(prune_lang, lang)
 
+
 @task()
 def verify(lang=None):
-    """ Verify that repos have been downloaded """
+    """ Verify that repos are present and correct """
     do(verify_lang, lang)
+
 
 def load_repos():
     with open('most_watched_repos.json', 'r') as fp:
@@ -69,13 +73,13 @@ def do(func, lang=None):
 
 def clone_lang(lang, repos):
     """ Clone the most-watched repos for a given language """
-    print('Cloning {} repositories...'.format(lang))
+    print('*** Cloning {} repositories...'.format(lang))
     local('mkdir -p repos/{}'.format(lang))
     for r in repos:
         user, reponame = r.split('/')
-        userpath = 'repos/{}/{}'.format(lang, user)
-        repopath = '{}/{}'.format(userpath, reponame)
-        if os.path.exists(os.path.join(os.getcwd(), repopath)):
+        userpath = Path('repos', lang, user)
+        repopath = Path('repos', lang, user, reponame)
+        if repopath.exists():
             print('Skipping {}...'.format(r))
             continue
         print('Cloning {}'.format(r))
@@ -86,15 +90,18 @@ def clone_lang(lang, repos):
 
 def verify_lang(lang, repos):
     """ Verify the most-watched repos for a given language """
-    print('Verifying {} repositories...'.format(lang))
+    print('*** Verifying {} repositories...'.format(lang))
     for r in repos:
         user, reponame = r.split('/')
-        userpath = 'repos/{}/{}'.format(lang, user)
-        repopath = '{}/{}'.format(userpath, reponame)
-        if os.path.exists(os.path.join(os.getcwd(), repopath)):
+        path = Path('repos', lang, user, reponame)
+        if not path.exists():
+            print('Missing: {}'.format(r))
             continue
-        else:
-            print('Missing {}'.format(r))
+        try:
+            r = Repo(path)
+        except NotGitRepository:
+            print('Corrupt: {}'.format(r))
+
 
 def prune_lang(lang, repos):
     print('Pruning {} repositories...'.format(lang))
@@ -106,7 +113,7 @@ def prune_lang(lang, repos):
         else:
             usermap[user] = [reponame]
     for user, repos in usermap.items():
-        path = Path('repos/{}/{}'.format(lang, user))
+        path = Path('repos', lang, user)
         if not path.exists():
             continue
         else:
@@ -114,5 +121,3 @@ def prune_lang(lang, repos):
             to_delete = set(subdirs) - set(repos)
             for d in to_delete:
                 print("To delete: {}/{}".format(user, to_delete))
-
-
