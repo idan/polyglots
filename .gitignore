@@ -1,3 +1,4 @@
 repos/
 *.pyc
 *.pyo
+*.env
