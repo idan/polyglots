@@ -8,7 +8,10 @@ from dulwich.repo import Repo
 from dulwich.errors import NotGitRepository
 from fabric.api import task, local, lcd
 
-REPOS_PATH = Path(os.environ['POLYGLOTS_REPOS'])
+try:
+    REPOS_PATH = Path(os.environ['POLYGLOTS_REPOS'])
+except KeyError:
+    REPOS_PATH = None
 
 
 @task()
@@ -67,6 +70,10 @@ def load_repos():
 
 def do(func, lang=None):
     """ Do something with some or all repos """
+    if not REPOS_PATH:
+        print "No REPOS_PATH env var set, I don't know where the repos are!"
+        print "Aborting..."
+        return
     languages = load_repos()
     if lang and lang in languages:
         func(lang, languages[lang])
