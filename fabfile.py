@@ -132,3 +132,18 @@ def prune_lang(lang, repos):
             to_delete = set(subdirs) - set(repos)
             for d in to_delete:
                 print("To delete: {}/{}".format(user, to_delete))
+
+
+@task()
+def launch_ec2(instancetype='m1.small'):
+    """ Launch an ec2 instance """
+    userdata = Path().child("aws_bootstrap.sh")
+    try:
+        EC2_KEYPAIR_NAME = Path(os.environ['EC2_KEYPAIR_NAME'])
+    except KeyError:
+        print('EC2_KEYPAIR_NAME environment variable not set! I need that to work.')
+        print('Aborting...')
+        return
+
+    cmd = 'ec2run ami-0cdf4965 -b /dev/sdc=snap-5b613818 -t {instancetype} -k {keypair} -f {userdata} --instance-initiated-shutdown-behavior terminate'
+    local(cmd.format(instancetype=instancetype, keypair=EC2_KEYPAIR_NAME, userdata=userdata))
