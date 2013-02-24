@@ -13,16 +13,18 @@ easy_install pip
 pip install ipython tornado pyzmq
 
 # git clone our stuff
-echo 'export IPYTHONDIR=~/polyglots/.ipython' >> /home/ubuntu/.bashrc
+
 echo 'export POLYGLOTS_REPOS=/mnt/data/repos' >> /home/ubuntu/.bashrc
-sudo -u ubuntu -i git clone https://github.com/umbrellaco/polyglots.git
+sudo -i -H -u ubuntu git clone https://github.com/umbrellaco/polyglots.git
+sudo -i -H -u ubuntu ln -s polyglots/.ipython .ipython
+
 pip install -r /home/ubuntu/polyglots/requirements.txt
 
-sudo -u ubuntu -i tmux new-session -d
-sudo -u ubuntu -i ipython notebook
+sudo -i -H -u ubuntu POLYGLOTS_REPOS=/mnt/data/repos tmux new-session -d -s polyglots 
+sudo -i -H -u ubuntu tmux new-window -tpolyglots:1 "ipython notebook"
+sudo -i -H -u ubuntu tmux rename-window -tpolyglots:1 "ipython_notebook"
+sudo -i -H -u ubuntu tmux select-window -t polyglots:0
 
 # mount the snapshot of the git repos
 mkdir -p /mnt/data
 mount -r -o noatime,nodiratime,noacl,nouser_xattr /dev/xvdc /mnt/data
-
-
