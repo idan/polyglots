@@ -70,7 +70,7 @@ c.NotebookApp.open_browser = False
 # configuration (through profiles), history storage, etc. The default is usually
 # $HOME/.ipython. This options can also be specified through the environment
 # variable IPYTHONDIR.
-c.NotebookApp.ipython_dir = u'~/polyglots/.ipython'
+# c.NotebookApp.ipython_dir = u'$HOME/polyglots/.ipython'
 
 # Set the log level by value or name.
 # c.NotebookApp.log_level = 20
@@ -446,4 +446,4 @@ c.NotebookApp.password = u'sha1:0b4eb9a5d30f:4fea7c45cb026b8a15e44240dafe0ef659f
 # c.NotebookManager.save_script = False
 
 # The directory to use for notebooks.
-c.NotebookManager.notebook_dir = u'~'
+c.NotebookManager.notebook_dir = u'$HOME'
