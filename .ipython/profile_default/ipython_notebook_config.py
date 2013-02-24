@@ -70,7 +70,7 @@ c.NotebookApp.open_browser = False
 # configuration (through profiles), history storage, etc. The default is usually
 # $HOME/.ipython. This options can also be specified through the environment
 # variable IPYTHONDIR.
-c.NotebookApp.ipython_dir = u'/mnt/data/.ipython'
+c.NotebookApp.ipython_dir = u'~/polyglots/.ipython'
 
 # Set the log level by value or name.
 # c.NotebookApp.log_level = 20
