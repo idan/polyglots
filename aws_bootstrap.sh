@@ -19,6 +19,7 @@ sudo -u ubuntu -i git clone https://github.com/umbrellaco/polyglots.git
 pip install -r /home/ubuntu/polyglots/requirements.txt
 
 sudo -u ubuntu -i tmux new-session -d
+sudo -u ubuntu -i ipython notebook
 
 # mount the snapshot of the git repos
 mkdir -p /mnt/data
