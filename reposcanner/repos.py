@@ -19,7 +19,7 @@ def analyze_commits(repo):
     try:
         commits = repo.revision_history(repo.head())
     except:
-        print("* Bad repo: {} {}/{}".format(repo.lang, repo.identifier))
+        print("* Bad repo: {} {}".format(repo.lang, repo.identifier))
         return
 
     doc = {}
@@ -36,7 +36,7 @@ def count_committers(repo):
     try:
         commits = repo.revision_history(repo.head())
     except:
-        print("* Bad repo: {} {}/{}".format(repo.lang, repo.identifier))
+        print("* Bad repo: {} {}".format(repo.lang, repo.identifier))
         return
 
     authors = [c.author for c in commits]
