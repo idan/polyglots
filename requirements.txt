@@ -1,5 +1,6 @@
 dulwich==0.8.7
 Fabric==1.5.3
+pymongo==2.4.2
 pyquery==1.2.4
 requests==1.1.0
 Unipath==0.2.1
