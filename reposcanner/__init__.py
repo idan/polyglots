@@ -23,17 +23,13 @@ db = conn[MONGO_DB_NAME]
 
 class Repository:
     """ Encapsulates repo metadata in one handy class. """
-    def __init__(self, lang, rank, user, name, path, repo):
+    def __init__(self, lang, rank, identifier):
+        self.identifier = identifier
+        self.user, self.name = self.identifier.split('/')
         self.lang = lang
         self.rank = rank
-        self.user = user
-        self.name = name
-        self.path = path
-        self.repo = repo  # the dulwich Repo class instance
-
-    @property
-    def identifier(self):
-        return u'{}/{}'.format(self.user, self.name)
+        self.path = REPOS_PATH.child(self.lang, self.user, self.name)
+        self.repo = Repo(self.path)  # the dulwich Repo class instance
 
 
 def walk_repos(*methods):
@@ -44,15 +40,7 @@ def walk_repos(*methods):
         repoindex = 0
         for r in repos:
             print ('== processing {} {} ({}:{})'.format(lang, r, langindex, repoindex))
-            user, reponame = r.split('/')
-            repopath = REPOS_PATH.child(lang, user, reponame)
-            repo = Repository(
-                lang,
-                repoindex,
-                user,
-                reponame,
-                repopath,
-                Repo(repopath))
+            repo = Repository(lang, repoindex, r)
             for m in methods:
                 print('= executing "{}"...'.format(m.func_name()))
                 m(repo)
