@@ -1,8 +1,10 @@
 import datetime
 from collections import Counter
 from subprocess import check_output
+import chardet
 
 from . import db
+
 
 def update_mongo_repo(repo, doc):
     """ update/insert (upsert) a repo record in mongo """
@@ -41,9 +43,18 @@ def count_committers(repo):
         print("* Bad repo: {} {}".format(repo.lang, repo.identifier))
         return
 
-    authors = [c.author for c in commits]
     counts = Counter()
-    for a in authors:
+    for author in [c.author for c in commits]:
+        if type(author) != unicode:
+            try:
+                a = author.decode('utf-8')
+            except UnicodeDecodeError:
+                detected = chardet.detect(author)
+                try:
+                    a = author.decode(detected['encoding'])
+                except UnicodeDecodeError:
+                    print('* Unable to decode author: {}'.format(author))
+                    continue
         counts[a] += 1
 
     # not allowed to use periods in key names in mongodb!

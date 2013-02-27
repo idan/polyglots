@@ -1,3 +1,4 @@
+chardet==2.1.1
 dulwich==0.8.7
 Fabric==1.5.3
 pymongo==2.4.2
