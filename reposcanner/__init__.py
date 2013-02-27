@@ -31,6 +31,9 @@ class Repository:
         self.path = REPOS_PATH.child(self.lang, self.user, self.name)
         self.repo = Repo(self.path)  # the dulwich Repo class instance
 
+    def __unicode__(self):
+        return unicode(self.identifier)
+
 
 def walk_repos(*methods):
     """ Iterate over all the repositories, calling methods on each one. """
