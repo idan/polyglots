@@ -48,7 +48,7 @@ def walk_repos(*methods):
             print ('== processing {} {} ({}:{})'.format(lang, r, langindex, repoindex))
             repo = Repository(lang, repoindex, r)
             for m in methods:
-                print('= executing "{}"...'.format(m.func_name()))
+                print('= executing "{}"...'.format(m.func_name))
                 m(repo)
             repoindex += 1
         langindex += 1
