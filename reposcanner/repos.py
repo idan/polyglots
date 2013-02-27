@@ -1,5 +1,6 @@
 import datetime
 from collections import Counter
+from subprocess import check_output
 
 from . import db
 
@@ -49,3 +50,10 @@ def count_committers(repo):
         u'authors': counts,
     }
     update_mongo_repo(repo, doc)
+
+
+def repo_size(repo):
+    raw = check_output(["du", "-sb", repo.path])
+    size = float(raw.split('\t')[0])
+    print('{} size: {}'.format(repo, size))
+    update_mongo_repo(repo, {'disk_bytes': size})
