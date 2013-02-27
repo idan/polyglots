@@ -53,10 +53,11 @@ def count_committers(repo):
         u'authors': [{'name': k, 'commits': v} for k, v in counts.items()],
     }
     update_mongo_repo(repo, doc)
+    print('{} distinct committers'.format(len(counts)))
 
 
 def repo_size(repo):
     raw = check_output(["du", "-sb", repo.path])
     size = int(raw.split('\t')[0])
-    print('{} size: {}'.format(repo, size))
     update_mongo_repo(repo, {'disk_bytes': size})
+    print('{} bytes'.format(repo, size))
