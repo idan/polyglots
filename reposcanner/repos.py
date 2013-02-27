@@ -103,7 +103,9 @@ def commit_days_histogram(repo):
     for v in dates.values():
         histogram[v] += 1
 
-    return weekdays, histogram
-
-
-
+    doc = {
+        'commit_days_of_week': dict(weekdays),
+        'commit_histogram': dict(histogram)
+    }
+    update_mongo_repo(repo, doc)
+    return('Done.')
