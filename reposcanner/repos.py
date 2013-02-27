@@ -71,3 +71,39 @@ def repo_size(repo):
     size = int(raw.split('\t')[0])
     update_mongo_repo(repo, {'disk_bytes': size})
     return('{} bytes'.format(size))
+
+
+def commit_days_histogram(repo):
+    try:
+        commits = repo.repo.revision_history(repo.repo.head())
+    except:
+        return("Bad repo: {} {}".format(repo.lang, repo.identifier))
+
+    # keep track of distribution of commits by day of week
+    weekdays = Counter({0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})
+
+    # histogram of number of daily commits
+    oneday = datetime.timedelta(days=1)
+    oldest = datetime.datetime.utcfromtimestamp(commits[-1].commit_time).date()
+    latest = datetime.datetime.utcfromtimestamp(commits[0].commit_time).date()
+    index = oldest
+    dates = Counter()  # one for every day between oldest and latest
+    histogram = Counter()
+
+    while index <= latest:
+        dates[index] = 0
+        index += oneday
+
+    for c in commits:
+        ts = datetime.datetime.utcfromtimestamp(c.commit_time)
+        date = ts.date()
+        dates[date] += 1
+        weekdays[date.weekday()] += 1
+
+    for v in dates.values():
+        histogram[v] += 1
+
+    return weekdays, histogram
+
+
+
