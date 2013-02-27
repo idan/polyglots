@@ -47,7 +47,7 @@ def count_committers(repo):
         counts[a] += 1
     doc = {
         u'authors_count': len(counts.keys()),
-        u'authors': counts,
+        u'authors': dict(counts),
     }
     update_mongo_repo(repo, doc)
 
