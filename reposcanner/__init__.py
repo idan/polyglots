@@ -34,6 +34,9 @@ class Repository:
     def __unicode__(self):
         return unicode(self.identifier)
 
+    def str(self):
+        return self.identifier
+
 
 def walk_repos(*methods):
     """ Iterate over all the repositories, calling methods on each one. """
