@@ -34,7 +34,7 @@ class Repository:
     def __unicode__(self):
         return unicode(self.identifier)
 
-    def str(self):
+    def __str__(self):
         return self.identifier
 
 
