@@ -60,4 +60,4 @@ def repo_size(repo):
     raw = check_output(["du", "-sb", repo.path])
     size = int(raw.split('\t')[0])
     update_mongo_repo(repo, {'disk_bytes': size})
-    print('{} bytes'.format(repo, size))
+    print('{} bytes'.format(size))
