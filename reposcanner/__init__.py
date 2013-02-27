@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 from unipath import FSPath as Path
 from dulwich.repo import Repo
 import pymongo
@@ -48,7 +49,8 @@ def walk_repos(*methods):
             print ('== processing {} {} ({}:{})'.format(lang, r, langindex, repoindex))
             repo = Repository(lang, repoindex, r)
             for m in methods:
-                print('= executing "{}"...'.format(m.func_name))
-                m(repo)
+                sys.stdout.write('executing "{}"... '.format(m.func_name))
+                message = m(repo)
+                print(message)
             repoindex += 1
         langindex += 1
