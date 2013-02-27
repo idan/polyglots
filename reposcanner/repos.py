@@ -17,7 +17,7 @@ def update_mongo_repo(repo, doc):
 
 def analyze_commits(repo):
     try:
-        commits = repo.revision_history(repo.head())
+        commits = repo.repo.revision_history(repo.repo.head())
     except:
         print("* Bad repo: {} {}".format(repo.lang, repo.identifier))
         return
@@ -34,7 +34,7 @@ def analyze_commits(repo):
 
 def count_committers(repo):
     try:
-        commits = repo.revision_history(repo.head())
+        commits = repo.repo.revision_history(repo.repo.head())
     except:
         print("* Bad repo: {} {}".format(repo.lang, repo.identifier))
         return
