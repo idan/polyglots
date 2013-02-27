@@ -80,7 +80,7 @@ def commit_days_histogram(repo):
         return("Bad repo: {} {}".format(repo.lang, repo.identifier))
 
     # keep track of distribution of commits by day of week
-    weekdays = Counter({0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})
+    weekdays = Counter({u'0': 0, u'1': 0, u'2': 0, u'3': 0, u'4': 0, u'5': 0, u'6': 0})
 
     # histogram of number of daily commits
     oneday = datetime.timedelta(days=1)
@@ -98,10 +98,10 @@ def commit_days_histogram(repo):
         ts = datetime.datetime.utcfromtimestamp(c.commit_time)
         date = ts.date()
         dates[date] += 1
-        weekdays[date.weekday()] += 1
+        weekdays[unicode(date.weekday())] += 1
 
     for v in dates.values():
-        histogram[v] += 1
+        histogram[unicode(v)] += 1
 
     doc = {
         'commit_days_of_week': dict(weekdays),
