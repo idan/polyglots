@@ -52,7 +52,7 @@ def count_committers(repo):
                 detected = chardet.detect(author)
                 try:
                     a = author.decode(detected['encoding'])
-                except UnicodeDecodeError:
+                except:
                     print('* Unable to decode author: {}'.format(author))
                     continue
         counts[a] += 1
