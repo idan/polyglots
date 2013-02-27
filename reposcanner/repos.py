@@ -45,9 +45,12 @@ def count_committers(repo):
     counts = Counter()
     for a in authors:
         counts[a] += 1
+
+    # not allowed to use periods in key names in mongodb!
+    # break up authors into array of dicts
     doc = {
         u'authors_count': len(counts.keys()),
-        u'authors': dict(counts),
+        u'authors': [{'name': k, 'commits': v} for k, v in counts.items()],
     }
     update_mongo_repo(repo, doc)
 
