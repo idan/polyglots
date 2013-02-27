@@ -49,7 +49,7 @@ def count_committers(repo):
     # not allowed to use periods in key names in mongodb!
     # break up authors into array of dicts
     doc = {
-        u'authors_count': len(counts.keys()),
+        u'authors_count': len(counts),
         u'authors': [{'name': k, 'commits': v} for k, v in counts.items()],
     }
     update_mongo_repo(repo, doc)
