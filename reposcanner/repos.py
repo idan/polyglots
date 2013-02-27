@@ -54,6 +54,6 @@ def count_committers(repo):
 
 def repo_size(repo):
     raw = check_output(["du", "-sb", repo.path])
-    size = float(raw.split('\t')[0])
+    size = int(raw.split('\t')[0])
     print('{} size: {}'.format(repo, size))
     update_mongo_repo(repo, {'disk_bytes': size})
