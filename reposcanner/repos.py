@@ -1,6 +1,7 @@
 import datetime
 from collections import Counter
 
+from . import db
 
 def update_mongo_repo(repo, doc):
     """ update/insert (upsert) a repo record in mongo """
