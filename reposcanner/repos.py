@@ -145,7 +145,8 @@ def github_repo_metadata(repo):
     ]
     data = r.json()
     for p in properties:
-        doc[p] = data[p]
+        if p in data:
+            doc[p] = data[p]
     remaining = r.headers['x-ratelimit-remaining']
     update_mongo_repo(repo, doc)
     return('Done ({} remaining)'.format(remaining))
