@@ -131,7 +131,7 @@ def github_repo_metadata(repo):
         u'has_wiki',
         u'description',
         u'network_count',
-        u'watchers_count'
+        u'watchers_count',
         u'size',
         u'homepage',
         u'fork',
