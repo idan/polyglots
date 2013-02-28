@@ -2,8 +2,12 @@ import datetime
 from collections import Counter
 from subprocess import check_output
 import chardet
+import requests
 
 from . import db
+
+GITHUB_CLIENT_ID = os.environ['GITHUB_CLIENT_ID']
+GITHUB_CLIENT_SECRET = os.environ['GITHUB_CLIENT_SECRET']
 
 
 def update_mongo_repo(repo, doc):
@@ -109,3 +113,38 @@ def commit_days_histogram(repo):
     }
     update_mongo_repo(repo, doc)
     return('Done.')
+
+
+def github_repo_metadata(repo):
+    url_template = 'https://api.github.com/repos/{user}/{repo}?client_id={client_id}&client_secret={client_secret}'
+    try:
+        r = requests.get(
+            url_template.format(
+                user=repo.user, repo=repo.name,
+                client_id=GITHUB_CLIENT_ID, client_secret=GITHUB_CLIENT_SECRET))
+    except:
+        return('Unable to fetch!')
+
+    doc = {}
+    properties = [
+        u'has_wiki',
+        u'description',
+        u'network_count',
+        u'watchers_count'
+        u'size',
+        u'homepage',
+        u'fork',
+        u'forks',
+        u'has_issues',
+        u'master_branch',
+        u'has_downloads',
+        u'watchers',
+        u'forks_count',
+        u'default_branch',
+    ]
+    data = r.json()
+    for p in properties:
+        doc[p] = data[p]
+    remaining = r.headers['x-ratelimit-remaining']
+    update_mongo_repo(repo, doc)
+    return('Done ({} remaining)'.format(remaining))
