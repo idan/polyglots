@@ -175,7 +175,7 @@ def commit_message_heatmap(repo):
     except:
         return("Bad repo: {} {}".format(repo.lang, repo.identifier))
 
-    rows = SparseList(fill=SparseList())
+    rows = SparseList(fill=SparseList)
     for commit in commits:
         u = commit.message.decode('utf-8')
         lines = [l.strip() for l in u.split(u'\n')]
