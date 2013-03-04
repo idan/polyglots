@@ -11,6 +11,22 @@ GITHUB_CLIENT_ID = os.environ['GITHUB_CLIENT_ID']
 GITHUB_CLIENT_SECRET = os.environ['GITHUB_CLIENT_SECRET']
 
 
+class SparseList(list):
+    def __init__(self, fill=int):
+        super(SparseList, self).__init__()
+        self._fill = fill
+    def __setitem__(self, index, value):
+        missing = index - len(self) + 1
+        if missing > 0:
+            self.extend([self._fill()] * missing)
+        list.__setitem__(self, index, value)
+    def __getitem__(self, index):
+        try:
+            return list.__getitem__(self, index)
+        except IndexError:
+            return self._fill()
+
+
 def update_mongo_repo(repo, doc):
     """ update/insert (upsert) a repo record in mongo """
     repos = db.repos
@@ -151,3 +167,32 @@ def github_repo_metadata(repo):
     remaining = r.headers['x-ratelimit-remaining']
     update_mongo_repo(repo, doc)
     return('Done ({} remaining)'.format(remaining))
+
+
+def commit_message_heatmap(repo):
+    try:
+        commits = repo.repo.revision_history(repo.repo.head())
+    except:
+        return("Bad repo: {} {}".format(repo.lang, repo.identifier))
+
+    rows = SparseList(fill=SparseList())
+    for commit in commits:
+        u = commit.message.decode('utf-8')
+        lines = [l.strip() for l in u.split(u'\n')]
+        # remove blank trailing lines
+        while True:
+            if lines[-1] == u'':
+                lines.pop()
+            else:
+                break
+
+        for row, line in enumerate(lines):
+            counter = rows[row]
+            for col, char in enumerate(line):
+                counter[col] += 1
+            rows[row] = counter
+
+    update_mongo_repo(repo, {u'commit_message_heatmap': rows})
+    return('{} lines'.format(len(rows)))
+
+
