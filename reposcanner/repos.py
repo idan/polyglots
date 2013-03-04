@@ -181,7 +181,7 @@ def commit_message_heatmap(repo):
         lines = [l.strip() for l in u.split(u'\n')]
         # remove blank trailing lines
         while True:
-            if lines[-1] == u'':
+            if len(lines) > 0 and lines[-1] == u'':
                 lines.pop()
             else:
                 break
