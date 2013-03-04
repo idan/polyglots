@@ -177,7 +177,15 @@ def commit_message_heatmap(repo):
 
     rows = SparseList(fill=SparseList)
     for commit in commits:
-        u = commit.message.decode('utf-8')
+        try:
+            u = commit.message.decode('utf-8')
+        except UnicodeDecodeError:
+            detected = chardet.detect(commit.message)
+            try:
+                u = commit.message.decode(detected['encoding'])
+            except UnicodeDecodeError:
+                print "*** Skipping commit (unknown encoding): {}".format(commit.sha)
+                continue
         lines = [l.strip() for l in u.split(u'\n')]
         # remove blank trailing lines
         while True:
