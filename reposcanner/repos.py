@@ -175,7 +175,7 @@ def commit_message_heatmap(repo):
     except:
         return("Bad repo: {} {}".format(repo.lang, repo.identifier))
 
-    rows = SparseList(fill=SparseList)
+    rows = SparseList(fill=Counter)
     for commit in commits:
         try:
             u = commit.message.decode('utf-8')
@@ -195,12 +195,17 @@ def commit_message_heatmap(repo):
                 break
 
         for row, line in enumerate(lines):
-            counter = rows[row]
-            for col, char in enumerate(line):
-                counter[col] += 1
-            rows[row] = counter
+            l = len(line)
+            if l > 0:
+                lengths = rows[row]
+                lengths[l] += 1
+                rows[row] = lengths
 
-    update_mongo_repo(repo, {u'commit_message_heatmap': rows})
+    sortedrows = []
+    for row in rows:
+        # row tuples are (length, frequency)
+        # sort by descending line length
+        sortedrows.append(sorted(row.items(), reverse=True, key=lambda x: x[0]))
+
+    update_mongo_repo(repo, {u'commit_message_heatmap': sortedrows})
     return('{} lines'.format(len(rows)))
-
-
