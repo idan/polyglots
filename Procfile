@@ -1,1 +1,1 @@
-celery: python celery worker --app githubscanner -l info
+celery: celery worker --app githubscanner -l info
