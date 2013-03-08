@@ -18,6 +18,7 @@ conn = pymongo.Connection(host=MONGOHQ_URL)
 db = conn[MONGO_DB_NAME]
 
 re_email = re.compile('([\w\-\.]+@(?:\w[\w\-]+\.)+[\w\-]+)')
+re_rel = re.compile(r'<(?P<url>\S+)>; rel="(?P<rel>\w+)"')
 
 github_auth_payload = {
     'client_id': os.environ['GITHUB_CLIENT_ID'],
@@ -26,6 +27,19 @@ github_auth_payload = {
 
 github_contributors_url = 'https://api.github.com/repos/{user}/{repo}/contributors'
 github_user_url = 'https://api.github.com/users/{user}'
+github_user_repos_url = 'https://api.github.com/users/{user}/repos'
+
+
+def parse_links(text):
+    """Parse the github 'link' header for rel=next/prev/first/last URLs"""
+    d = {}
+    if not text:
+        return d
+    for chunk in text.split(','):
+        chunk = chunk.strip()
+        match = re_rel.match(chunk).groupdict()
+        d[match['rel']] = match['url']
+    return d
 
 
 @celery.task
@@ -78,3 +92,75 @@ def get_github_user(user):
             doc[prop] = raw[prop]
 
     db.contributors.update({'login': user}, {'$set': doc})
+
+
+@celery.task(rate_limit='12500/h', default_retry_delay=5*60)
+def get_user_repos(user, url=None):
+    # in case something goes wrong
+    delay_seconds = 2**get_user_repos.request.retries
+
+    # get the contributor from the db, skip if no public repos
+    contrib = db.contributors.find_one({'login': user}, fields=['public_repos'])
+    if contrib['public_repos'] == 0:
+        print('No repos for "{}"!'.format(user))
+        return
+
+    payload = github_auth_payload.copy()
+    payload['per_page'] = 100
+    if url is None:
+        url = github_user_repos_url.format(user=user)
+
+    try:
+        r = requests.get(url, params=payload)
+    except RequestException as exc:
+        raise get_user_repos.retry(exc=exc, countdown=delay_seconds)
+
+    raw = r.json()
+
+    if type(raw) != list:
+        raise get_user_repos.retry(countdown=delay_seconds)
+
+    if len(raw) > 0 and 'full_name' not in raw[0]:
+        raise get_user_repos.retry(countdown=delay_seconds)
+
+    # massage the repo info
+    repos = []
+    for repo in raw:
+        copy_props = ['name', 'full_name', 'description', 'fork', 'created_at',
+                      'updated_at', 'pushed_at', 'homepage', 'size',
+                      'watchers_count', 'language', 'has_issues',
+                      'has_downloads', 'has_downloads', 'forks_count',
+                      'open_issues_count', 'forks', 'open_issues', 'watchers',
+                      'master_branch', 'default_branch']
+        massaged = {}
+        for prop in copy_props:
+            if prop in repo:
+                massaged[prop] = repo[prop]
+
+        massaged['owner'] = {
+            'login': repo['owner']['login'],
+            'type': repo['owner']['type'],
+        }
+        repos.append(massaged)
+
+    if len(repos) == 1:
+        doc = {
+            '$push': {'repos': repos[0]}
+        }
+    else:
+        doc = {
+            '$push': {'repos': {'$each': repos}}
+        }
+
+    if 'link' in r.headers:
+        links = parse_links(r.headers['link'])
+        if 'next' in links:
+            get_user_repos.delay(user, url=links['next'])
+        else:
+            # all finished!
+            doc['$set'] = {'repos_fetched': True}
+    else:
+        # all finished!
+        doc['$set'] = {'repos_fetched': True}
+
+    db.contributors.update({'login': user}, doc)
