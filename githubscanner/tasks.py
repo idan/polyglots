@@ -1,7 +1,9 @@
 from __future__ import absolute_import
 
 import os
+import sys
 import re
+from collections import Counter
 import pymongo
 from bson import ObjectId
 import requests
@@ -164,3 +166,30 @@ def get_user_repos(user, url=None):
         doc['$set'] = {'repos_fetched': True}
 
     db.contributors.update({'login': user}, doc)
+
+
+def ranked_language_contributions():
+    """
+    Annotate contributors with the languages of the ranked repositories they
+    have contributed to.
+    """
+    contributors = {}
+    for repo in db.repos.find(fields=['user', 'name', 'contributors', 'language']):
+        sys.stdout.write('Processing "{}/{}"... '.format(
+            repo['user'], repo['name']))
+        language = repo['language']
+        if 'contributors' not in repo:
+            print("No contributors!")
+            continue
+        logins = repo['contributors'].keys()
+        for login in logins:
+            if login not in contributors:
+                contributors[login] = Counter()
+            contributors[login][language] += 1
+        print('indexed {} contributors'.format(len(logins)))
+
+    for login, freq in contributors.items():
+        sys.stdout.write('Annotating "{}"... '.format(login))
+        db.contributors.update({'login': login},
+                               {'$set': {'ranked_languages': freq}})
+        print('Done! {}'.format(freq))
