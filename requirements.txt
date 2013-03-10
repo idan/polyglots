@@ -3,6 +3,7 @@ chardet==2.1.1
 dulwich==0.8.7
 Fabric==1.5.3
 hiredis==0.1.1
+iso8601==0.1.4
 pymongo==2.4.2
 pyquery==1.2.4
 pytz==2012j
