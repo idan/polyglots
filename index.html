@@ -22,14 +22,27 @@
                 <h1>The Polyglots Project</h1>
                 <p>The craft of software development has never been neatly cataloged in one, centralized location. Some projects have long been developed in the open, and some have even exposed their development history, but they were islands: disjoint and difficult to connect.</p>
                 <p>These connections between multiple developers and multiple projects are the glue that binds us together into larger developer communities. Github is our mirror, and for the first time we can take a look at ourselves—how we work, how we think, how the neighbors are getting along.</p>
+                <p>Our sample dataset is the cream of Github: the top 200 repositories for each of the <a href="https://github.com/languages">top ten languages</a>. These are what we'll call the <em>ranked repositories</em>.</p>
             </header>
 
             <section id="polyglot_tendencies">
                 <header>
                     <h1>Polyglot Tendencies</h1>
-                    <p>The top repositories enjoy contributions from 44,389 Github users.</p>
                 </header>
-                <div class="vis"></div>
+                <p>There are 44,389 registered github accounts with at least one commit to a ranked repository. Of those, 37,420 only make commits to ranked repositories in their language. But 6,969 (we can't make this sort of thing up!) have made a contribution to a ranked repository in another language. How do those polyglots behave?</p>
+                <p>This is a chord diagram which depicts the ranked repositories, and the contributors who have made at least one commit in a given language to the ranked repositories. Connections between two languages indicate developers who have made contributions to a top-200 repo in more than one language. Links are colored by the more frequent source; more JavaScript developers contribute to Ruby than the other way around:</p>
+                <div class="all_polyglots"></div>
+                <p>Unsurprisingly, most developers stick to what they already know. Every language has a significant link to itself, often larger than all the rest of the links combined—developers of a language tend to write other things in the same language.</p>
+                <div class="row">
+                    <figure class="chord_cpp">
+                        <div class="vis"></div>
+                        <figcaption>The top C++ developers are givers but not takers, contributing more to other languages than they receive.</figcaption>
+                    </figure>
+                    <figure class="chord_ruby">
+                        <div class="vis"></div>
+                        <figcaption>Ruby is the opposite: developers from other languages like to dabble in Ruby.</figcaption>
+                    </figure>
+                </div>
             </section>
 
         </div>

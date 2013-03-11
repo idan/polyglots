@@ -145,85 +145,17 @@ chord_diagram = (id, el, data, opts) ->
         group.on('mouseover', mouseover)
 
 
-
-
-
 $ ->
-    console.log('domready!')
     d3.json("static/data/language_adjacency.json", (error, data) ->
-        chord_diagram('chord_repos', "#polyglot_tendencies>.vis", data.repos)
-        chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits)
-        chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", data.repos_noself)
-        chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", data.commits_noself)
-        chord_diagram('chord_commits_noself_small', "#polyglot_tendencies>.vis", data.commits_noself, {width: 200, height: 200, labels: false, lang: 'Python'})
-        chord_diagram('chord_commits_people', "#polyglot_tendencies>.vis", data.people, {symmetric: true, lang: 'Java'})
-        chord_diagram('chord_commits_people_noself', "#polyglot_tendencies>.vis", data.people_noself, {symmetric: true})
+        chord_diagram('chord_repos', "#polyglot_tendencies>.all_polyglots", data.repos)
+        chord_diagram('chord_cpp_small', ".chord_cpp>.vis", data.repos, {width: 200, height: 200, labels: false, lang: 'Shell'})
+        chord_diagram('chord_ruby_small', ".chord_ruby>.vis", data.repos, {width: 200, height: 200, labels: false, lang: 'Ruby'})
+        # chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits)
+        # chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", data.repos_noself)
+        # chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", data.commits_noself)
+        # chord_diagram('chord_commits_noself_small', "#polyglot_tendencies>.vis", data.commits_noself, {width: 200, height: 200, labels: false, lang: 'Python'})
+        # chord_diagram('chord_commits_people', "#polyglot_tendencies>.vis", data.people, {symmetric: true, lang: 'Java'})
+        # chord_diagram('chord_commits_people_noself', "#polyglot_tendencies>.vis", data.people_noself, {symmetric: true})
 
 
     )
-    return
-
-
-    # d3.csv("cities.csv", function(cities) {
-    #   d3.json("matrix.json", function(matrix) {
-
-    #     # Compute the chord layout.
-    #     layout.matrix(matrix);
-
-    #     # Add a group per neighborhood.
-    #     group = svg.selectAll(".group")
-    #         .data(layout.groups)
-    #       .enter().append("g")
-    #         .attr("class", "group")
-    #         .on("mouseover", mouseover);
-
-    #     # Add a mouseover title.
-    #     group.append("title").text(function(d, i) {
-    #         return "#{languages[i].name}: #{d}"
-    #     });
-
-    #     # Add the group arc.
-    #     groupPath = group.append("path")
-    #         .attr("id", function(d, i) { return "group" + i; })
-    #         .attr("d", arc)
-    #         .style("fill", function(d, i) { return cities[i].color; });
-
-    #     # Add a text label.
-    #     groupText = group.append("text")
-    #         .attr("x", 6)
-    #         .attr("dy", 15);
-
-    #     groupText.append("textPath")
-    #         .attr("xlink:href", function(d, i) { return "#group" + i; })
-    #         .text(function(d, i) { return cities[i].name; });
-
-    #     # Remove the labels that don't fit. :(
-    #     groupText.filter(function(d, i) { return groupPath[0][i].getTotalLength() / 2 - 16 < this.getComputedTextLength(); })
-    #         .remove();
-
-    #     # Add the chords.
-    #     chord = svg.selectAll(".chord")
-    #         .data(layout.chords)
-    #       .enter().append("path")
-    #         .attr("class", "chord")
-    #         .style("fill", function(d) { return cities[d.source.index].color; })
-    #         .attr("d", path);
-
-    #     # Add an elaborate mouseover title for each chord.
-    #     chord.append("title").text(function(d) {
-    #       return cities[d.source.index].name
-    #           + " → " + cities[d.target.index].name
-    #           + ": " + formatPercent(d.source.value)
-    #           + "\n" + cities[d.target.index].name
-    #           + " → " + cities[d.source.index].name
-    #           + ": " + formatPercent(d.target.value);
-    #     });
-
-    #     function mouseover(d, i) {
-    #       chord.classed("fade", function(p) {
-    #         return p.source.index != i
-    #             && p.target.index != i;
-    #       });
-    #     }
-    #   });
-    # });

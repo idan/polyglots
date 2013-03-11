@@ -93,6 +93,24 @@ section {
         max-width: 45em;
         line-height: 1.75em;
     }
+    .row {
+        @include clearfix;
+        &>* {
+            float: left;
+            width: 30%;
+            margin-right: 5%;
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+    figure {
+        display: block;
+    }
+    figcaption {
+        font-size: 0.85em;
+        font-style: italic;
+    }
 }
 
 #polyglot_tendencies {

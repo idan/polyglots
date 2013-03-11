@@ -408,6 +408,24 @@ section {
     font-size: 1.125em;
     max-width: 45em;
     line-height: 1.75em; }
+  section .row {
+    *zoom: 1; }
+    section .row:before, section .row:after {
+      content: " ";
+      display: table; }
+    section .row:after {
+      clear: both; }
+    section .row > * {
+      float: left;
+      width: 30%;
+      margin-right: 5%; }
+      section .row > *:last-child {
+        margin-right: 0; }
+  section figure {
+    display: block; }
+  section figcaption {
+    font-size: 0.85em;
+    font-style: italic; }
 
 #polyglot_tendencies {
   border-left-color: #7f8c8d; }

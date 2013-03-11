@@ -159,24 +159,19 @@
   };
 
   $(function() {
-    console.log('domready!');
-    d3.json("static/data/language_adjacency.json", function(error, data) {
-      chord_diagram('chord_repos', "#polyglot_tendencies>.vis", data.repos);
-      chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits);
-      chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", data.repos_noself);
-      chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", data.commits_noself);
-      chord_diagram('chord_commits_noself_small', "#polyglot_tendencies>.vis", data.commits_noself, {
+    return d3.json("static/data/language_adjacency.json", function(error, data) {
+      chord_diagram('chord_repos', "#polyglot_tendencies>.all_polyglots", data.repos);
+      chord_diagram('chord_cpp_small', ".chord_cpp>.vis", data.repos, {
         width: 200,
         height: 200,
         labels: false,
-        lang: 'Python'
+        lang: 'Shell'
       });
-      chord_diagram('chord_commits_people', "#polyglot_tendencies>.vis", data.people, {
-        symmetric: true,
-        lang: 'Java'
-      });
-      return chord_diagram('chord_commits_people_noself', "#polyglot_tendencies>.vis", data.people_noself, {
-        symmetric: true
+      return chord_diagram('chord_ruby_small', ".chord_ruby>.vis", data.repos, {
+        width: 200,
+        height: 200,
+        labels: false,
+        lang: 'Ruby'
       });
     });
   });
