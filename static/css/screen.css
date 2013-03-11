@@ -333,6 +333,13 @@ table {
   src: url("../fonts/aften_screen_italic.eot");
   src: url("../fonts/aften_screen_italic.eot?#iefix") format("embedded-opentype"), url("../fonts/aften_screen_italic.woff") format("woff"), url("../fonts/aften_screen_italic.ttf") format("truetype"), url("../fonts/aften_screen_italic.svg#Aften") format("svg"); }
 
+@font-face {
+  font-family: "Aften SC";
+  font-weight: 400;
+  font-style: normal;
+  src: url("../fonts/aften_screen_sc.eot");
+  src: url("../fonts/aften_screen_sc.eot?#iefix") format("embedded-opentype"), url("../fonts/aften_screen_sc.woff") format("woff"), url("../fonts/aften_screen_sc.ttf") format("truetype"), url("../fonts/aften_screen_sc.svg#Aften SC") format("svg"); }
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -342,4 +349,49 @@ body, html {
   margin: 0;
   padding: 0;
   background: white;
-  font-family: Aften, sans-serif; }
+  font-family: Aften, sans-serif;
+  color: #444; }
+
+#intro {
+  max-width: 50em;
+  border-left: 1em solid #ecf0f1;
+  padding: 2em 0 2em 4em; }
+  #intro h1 {
+    font-weight: normal;
+    font-size: 3em; }
+  #intro p {
+    font-size: 1.125em;
+    max-width: 45em;
+    line-height: 1.75em; }
+
+section {
+  max-width: 50em;
+  border-left: 1em solid #ecf0f1;
+  padding: 2em 0 2em 4em; }
+  section header {
+    max-width: 36em; }
+  section h1 {
+    color: #34495e;
+    font-weight: normal;
+    font-family: "Aften SC", sans-serif; }
+  section p {
+    font-size: 1.125em;
+    max-width: 45em;
+    line-height: 1.75em; }
+
+#polyglot_tendencies {
+  border-left-color: #7f8c8d; }
+
+#circle circle {
+  fill: none;
+  pointer-events: all; }
+#circle text {
+  fill: white; }
+#circle .chord {
+  -webkit-transition: fill-opacity 0.1s linear;
+  -moz-transition: fill-opacity 0.1s linear;
+  -ms-transition: fill-opacity 0.1s linear;
+  -o-transition: fill-opacity 0.1s linear;
+  transition: fill-opacity 0.1s linear; }
+#circle:hover .chord.fade {
+  fill-opacity: 0.075; }

@@ -6,12 +6,6 @@
     @include prefixer(font-feature-settings, $settings, webkit moz spec);
 }
 
-$color-purple: #130026;
-$color-purple-light: lighten($color-purple, 10%);
-$color-orange: #F16635;
-$color-ocean: #cecece;
-$color-tan: #E0DAC0;
-
 
 @include font-face($font-family: "Aften",
                    $file-path: "../fonts/aften_screen",
@@ -29,6 +23,11 @@ $color-tan: #E0DAC0;
                    $weight: 400,
                    $style: italic);
 
+@include font-face($font-family: "Aften SC",
+                   $file-path: "../fonts/aften_screen_sc",
+                   $weight: 400,
+                   $style: normal);
+
 
 * {
     @include box-sizing(border-box);
@@ -39,5 +38,74 @@ body, html {
     padding: 0;
     background: white;
     font-family: Aften, sans-serif;
+    color: #444;
 }
+
+// .wrap {
+//   width: 60em;
+//   margin: 0 auto;
+// }
+
+@mixin row {
+    max-width: 50em;
+    border-left: 1em solid $color-clouds;
+    padding: 2em 0 2em 4em;
+}
+
+#intro {
+    @include row;
+    h1 {
+        font-weight: normal;
+        font-size: 3em;
+
+    }
+    p {
+        font-size: 1.125em;
+        max-width: 45em;
+        line-height: 1.75em;
+    }
+}
+
+section {
+    @include row;
+    header {
+        max-width: 36em;
+    }
+    h1 {
+        color: $color-wet-asphalt;
+        font-weight: normal;
+        font-family: "Aften SC", sans-serif;
+    }
+    p {
+        font-size: 1.125em;
+        max-width: 45em;
+        line-height: 1.75em;
+    }
+}
+
+#polyglot_tendencies {
+    border-left-color: $color-asbestos;
+}
+
+
+
+#circle {
+    circle {
+        fill: none;
+        pointer-events: all;
+    }
+    text {
+        fill: white;
+    }
+
+    .chord {
+        @include transition (fill-opacity 0.1s linear);
+    }
+    &:hover .chord.fade {
+        // fill: $color-clouds !important;
+        fill-opacity: 0.075;
+    }
+
+}
+
 
