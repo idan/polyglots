@@ -95,8 +95,11 @@
     }).rank;
   };
 
-  chord_diagram = function(el, width, height, data, lang, labels) {
+  chord_diagram = function(id, el, width, height, data, lang, labels) {
     var arc, chord, formatPercent, group, groupPath, groupText, innerRadius, layout, mouseover, outerRadius, path, svg;
+    if (labels == null) {
+      labels = true;
+    }
     outerRadius = Math.min(width, height) / 2 - 10;
     innerRadius = outerRadius - 24;
     formatPercent = d3.format(".1%");
@@ -115,19 +118,21 @@
     group = svg.selectAll(".group").data(layout.groups).enter().append("g").attr("class", "group");
     group.on('mouseover', mouseover);
     group.append("title").text(function(d, i) {
-      return "" + languages[i].name + ": " + d;
+      return "" + languages[i].name;
     });
     groupPath = group.append("path").attr("id", function(d, i) {
-      return "group" + i;
+      return "" + id + "_group" + i;
     }).attr("d", arc).style("fill", function(d, i) {
       return languages[i].color;
     });
-    groupText = group.append("text").attr("x", 6).attr("dy", 15);
-    groupText.append("textPath").attr("xlink:href", function(d, i) {
-      return "#group" + i;
-    }).text(function(d, i) {
-      return languages[i].name;
-    });
+    if (labels) {
+      groupText = group.append("text").attr("x", 6).attr("dy", 15);
+      groupText.append("textPath").attr("xlink:href", function(d, i) {
+        return "#" + id + "_group" + i;
+      }).text(function(d, i) {
+        return languages[i].name;
+      });
+    }
     return chord = svg.selectAll(".chord").data(layout.chords).enter().append("path").attr("class", "chord").style("fill", function(d) {
       return languages[d.source.index].color;
     }).attr("d", path);
@@ -136,10 +141,11 @@
   $(function() {
     console.log('domready!');
     d3.json("static/data/language_adjacency.json", function(error, data) {
-      chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.repos);
-      chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.commits);
-      chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.repos_noself);
-      return chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.commits_noself);
+      chord_diagram('chord_repos', "#polyglot_tendencies>.vis", 500, 500, data.repos);
+      chord_diagram('chord_commits', "#polyglot_tendencies>.vis", 500, 500, data.commits);
+      chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", 500, 500, data.repos_noself);
+      chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", 500, 500, data.commits_noself);
+      return chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", 300, 300, data.commits_noself, null, false);
     });
   });
 

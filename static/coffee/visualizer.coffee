@@ -43,7 +43,7 @@ get_language_rank = (language) ->
 
 
 
-chord_diagram = (el, width, height, data, lang, labels) ->
+chord_diagram = (id, el, width, height, data, lang, labels = true) ->
     outerRadius = Math.min(width, height) / 2 - 10
     innerRadius = outerRadius - 24
 
@@ -94,22 +94,24 @@ chord_diagram = (el, width, height, data, lang, labels) ->
     #     console.log("should fix!")
 
     # Add a mouseover title.
-    group.append("title").text((d, i) -> return "#{languages[i].name}: #{d}")
+    group.append("title").text((d, i) -> return "#{languages[i].name}")
 
     # Add the group arc.
     groupPath = group.append("path")
-        .attr("id", (d, i) -> return "group" + i)
+        .attr("id", (d, i) -> return "#{id}_group#{i}")
         .attr("d", arc)
         .style("fill", (d, i) -> return languages[i].color)
 
-    # Add a text label.
-    groupText = group.append("text")
-        .attr("x", 6)
-        .attr("dy", 15)
 
-    groupText.append("textPath")
-        .attr("xlink:href", (d, i) -> return "#group#{i}")
-        .text((d, i) -> return languages[i].name );
+    if labels
+        # Add a text label.
+        groupText = group.append("text")
+            .attr("x", 6)
+            .attr("dy", 15)
+
+        groupText.append("textPath")
+            .attr("xlink:href", (d, i) -> return "##{id}_group#{i}")
+            .text((d, i) -> return languages[i].name );
 
     # Add the chords.
     chord = svg.selectAll(".chord")
@@ -119,6 +121,9 @@ chord_diagram = (el, width, height, data, lang, labels) ->
         .style("fill", (d) -> return languages[d.source.index].color )
         .attr("d", path);
 
+    # # Add an elaborate mouseover title for each chord.
+    # chord.append("title").text((d) -> return languages[d.source.index].name)
+
 
 
 
@@ -126,10 +131,11 @@ chord_diagram = (el, width, height, data, lang, labels) ->
 $ ->
     console.log('domready!')
     d3.json("static/data/language_adjacency.json", (error, data) ->
-        chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.repos)
-        chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.commits)
-        chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.repos_noself)
-        chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.commits_noself)
+        chord_diagram('chord_repos', "#polyglot_tendencies>.vis", 500, 500, data.repos)
+        chord_diagram('chord_commits', "#polyglot_tendencies>.vis", 500, 500, data.commits)
+        chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", 500, 500, data.repos_noself)
+        chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", 500, 500, data.commits_noself)
+        chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", 300, 300, data.commits_noself, null, false)
 
     )
     return
