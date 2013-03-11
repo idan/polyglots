@@ -38,37 +38,12 @@ languages = [
     {"name": "Perl", "rank": 8, "contributors": 2144, "contributions": 3224, "color": colors.pomegranate},
     {"name": "Obj-C", "rank": 9, "contributors": 2037, "contributions": 2830, "color": colors.carrot}]
 
-polyglot_matrix =
-    [[8343, 2796, 249, 724, 533, 910, 665, 339, 197, 155],
-     [1642, 18026, 435, 1035, 1111, 703, 1248, 394, 441, 511],
-     [271, 663, 5184, 301, 305, 131, 442, 155, 67, 67],
-     [629, 1079, 269, 8785, 579, 309, 1113, 292, 215, 158],
-     [789, 2375, 332, 638, 3946, 424, 924, 241, 145, 127],
-     [716, 562, 79, 316, 223, 9082, 274, 100, 108, 98],
-     [594, 1669, 293, 780, 551, 300, 18460, 667, 469, 232],
-     [479, 690, 178, 367, 269, 202, 1652, 5011, 195, 99],
-     [167, 470, 61, 240, 170, 128, 764, 110, 3224, 73],
-     [162, 629, 88, 258, 128, 74, 217, 83, 76, 2830]]
-
- polyglot_matrix_noself =
-     [[0, 2796, 249, 724, 533, 910, 665, 339, 197, 155],
-      [1642, 0, 435, 1035, 1111, 703, 1248, 394, 441, 511],
-      [271, 663, 0, 301, 305, 131, 442, 155, 67, 67],
-      [629, 1079, 269, 0, 579, 309, 1113, 292, 215, 158],
-      [789, 2375, 332, 638, 0, 424, 924, 241, 145, 127],
-      [716, 562, 79, 316, 223, 0, 274, 100, 108, 98],
-      [594, 1669, 293, 780, 551, 300, 0, 667, 469, 232],
-      [479, 690, 178, 367, 269, 202, 1652, 0, 195, 99],
-      [167, 470, 61, 240, 170, 128, 764, 110, 0, 73],
-      [162, 629, 88, 258, 128, 74, 217, 83, 76, 0]]
+get_language_rank = (language) ->
+    return _.find(languages, (l) -> return l.name == language).rank
 
 
 
-$ ->
-    console.log('domready!')
-
-    width = 600
-    height = 600
+chord_diagram = (el, width, height, data, lang, labels) ->
     outerRadius = Math.min(width, height) / 2 - 10
     innerRadius = outerRadius - 24
 
@@ -86,7 +61,7 @@ $ ->
     path = d3.svg.chord()
         .radius(innerRadius)
 
-    svg = d3.select("#polyglot_tendencies>.vis").append("svg")
+    svg = d3.select(el).append("svg")
         .attr("width", width)
         .attr("height", height)
       .append("g")
@@ -97,7 +72,7 @@ $ ->
         .attr("r", outerRadius)
 
     # Compute the chord layout.
-    layout.matrix(polyglot_matrix_noself)
+    layout.matrix(data)
 
     mouseover = (d, i) ->
         console.log("hover!")
@@ -110,7 +85,13 @@ $ ->
         .data(layout.groups)
       .enter().append("g")
         .attr("class", "group")
-        .on("mouseover", mouseover)
+
+    group.on('mouseover', mouseover)
+    # if not lang?
+    #     group.on("mouseover", mouseover)
+    # else
+    #     # XXX TODO
+    #     console.log("should fix!")
 
     # Add a mouseover title.
     group.append("title").text((d, i) -> return "#{languages[i].name}: #{d}")
@@ -139,6 +120,19 @@ $ ->
         .attr("d", path);
 
 
+
+
+
+$ ->
+    console.log('domready!')
+    d3.json("static/data/language_adjacency.json", (error, data) ->
+        chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.repos)
+        chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.commits)
+        chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.repos_noself)
+        chord_diagram("#polyglot_tendencies>.vis", 500, 500, data.commits_noself)
+
+    )
+    return
 
 
     # d3.csv("cities.csv", function(cities) {
