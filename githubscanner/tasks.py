@@ -173,7 +173,13 @@ def ranked_language_contributions():
     Annotate contributors with the languages of the ranked repositories they
     have contributed to.
     """
-    contributors = {}
+
+    # Total number of ranked repositories committed to, by language
+    contributor_lang_freq = {}
+
+    # Total number of commits to ranked repos, by language
+    contributor_langcommit_freq = {}
+
     for repo in db.repos.find(fields=['user', 'name', 'contributors', 'language']):
         sys.stdout.write('Processing "{}/{}"... '.format(
             repo['user'], repo['name']))
@@ -181,15 +187,22 @@ def ranked_language_contributions():
         if 'contributors' not in repo:
             print("No contributors!")
             continue
-        logins = repo['contributors'].keys()
-        for login in logins:
-            if login not in contributors:
-                contributors[login] = Counter()
-            contributors[login][language] += 1
-        print('indexed {} contributors'.format(len(logins)))
+        contributors = repo['contributors']
+        for login, commits in contributors.items():
+            if login not in contributor_lang_freq:
+                contributor_lang_freq[login] = Counter()
+            if login not in contributor_langcommit_freq:
+                contributor_langcommit_freq[login] = Counter()
+            contributor_lang_freq[login][language] += 1
+            contributor_langcommit_freq[login][language] += commits
 
-    for login, freq in contributors.items():
+        print('indexed {} contributors'.format(len(contributors)))
+
+    logins = contributor_lang_freq.keys()
+    for login in logins:
         sys.stdout.write('Annotating "{}"... '.format(login))
-        db.contributors.update({'login': login},
-                               {'$set': {'ranked_languages': freq}})
-        print('Done! {}'.format(freq))
+        db.contributors.update({'login': login}, {'$set': {
+            'ranked_repos_by_language': contributor_lang_freq[login],
+            'ranked_repos_by_language_commits': contributor_langcommit_freq[login],
+        }})
+        print('Done!')
