@@ -43,8 +43,17 @@ get_language_rank = (language) ->
 
 
 
-chord_diagram = (id, el, width, height, data, lang, labels = true) ->
-    outerRadius = Math.min(width, height) / 2 - 10
+chord_defaults = {
+    width: 600,
+    height: 600,
+    labels: true,
+    symmetric: false, # symmetric colors chords by source on hover,
+    lang: null # pin the chart to a specific language
+}
+
+chord_diagram = (id, el, data, opts) ->
+    opts = _.defaults(opts or {}, chord_defaults)
+    outerRadius = Math.min(opts.width, opts.height) / 2 - 10
     innerRadius = outerRadius - 24
 
     formatPercent = d3.format(".1%")
@@ -62,11 +71,11 @@ chord_diagram = (id, el, width, height, data, lang, labels = true) ->
         .radius(innerRadius)
 
     svg = d3.select(el).append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("width", opts.width)
+        .attr("height", opts.height)
       .append("g")
         .attr("id", "circle")
-        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .attr("transform", "translate(" + opts.width / 2 + "," + opts.height / 2 + ")")
 
     svg.append("circle")
         .attr("r", outerRadius)
@@ -75,7 +84,6 @@ chord_diagram = (id, el, width, height, data, lang, labels = true) ->
     layout.matrix(data)
 
     mouseover = (d, i) ->
-        console.log("hover!")
         chord.classed("fade", (p) ->
             return p.source.index != i && p.target.index != i
         )
@@ -86,14 +94,7 @@ chord_diagram = (id, el, width, height, data, lang, labels = true) ->
       .enter().append("g")
         .attr("class", "group")
 
-    group.on('mouseover', mouseover)
-    # if not lang?
-    #     group.on("mouseover", mouseover)
-    # else
-    #     # XXX TODO
-    #     console.log("should fix!")
-
-    # Add a mouseover title.
+    # Add a mouseover title to the arcs
     group.append("title").text((d, i) -> return "#{languages[i].name}")
 
     # Add the group arc.
@@ -103,7 +104,7 @@ chord_diagram = (id, el, width, height, data, lang, labels = true) ->
         .style("fill", (d, i) -> return languages[i].color)
 
 
-    if labels
+    if opts.labels
         # Add a text label.
         groupText = group.append("text")
             .attr("x", 6)
@@ -113,16 +114,35 @@ chord_diagram = (id, el, width, height, data, lang, labels = true) ->
             .attr("xlink:href", (d, i) -> return "##{id}_group#{i}")
             .text((d, i) -> return languages[i].name );
 
+        # Remove the labels that don't fit
+        groupText.filter((d, i) ->
+            return groupPath[0][i].getTotalLength() / 2 - 16 < this.getComputedTextLength())
+            .remove();
+
     # Add the chords.
     chord = svg.selectAll(".chord")
         .data(layout.chords)
       .enter().append("path")
         .attr("class", "chord")
-        .style("fill", (d) -> return languages[d.source.index].color )
+        .style("fill", (d) ->
+            if opts.symmetric
+                return colors.silver
+            else
+                return languages[d.source.index].color
+        )
         .attr("d", path);
 
     # # Add an elaborate mouseover title for each chord.
     # chord.append("title").text((d) -> return languages[d.source.index].name)
+
+    if opts.lang?
+        rank = get_language_rank(opts.lang)
+        svg.classed("permafade", true)
+        chord.classed("fade", (d, i) ->
+            return d.source.index != rank && d.target.index != rank
+        )
+    else
+        group.on('mouseover', mouseover)
 
 
 
@@ -131,13 +151,13 @@ chord_diagram = (id, el, width, height, data, lang, labels = true) ->
 $ ->
     console.log('domready!')
     d3.json("static/data/language_adjacency.json", (error, data) ->
-        chord_diagram('chord_repos', "#polyglot_tendencies>.vis", 500, 500, data.repos)
-        chord_diagram('chord_commits', "#polyglot_tendencies>.vis", 500, 500, data.commits)
-        chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", 500, 500, data.repos_noself)
-        chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", 500, 500, data.commits_noself)
-        chord_diagram('chord_commits_noself2', "#polyglot_tendencies>.vis", 300, 300, data.commits_noself, null, false)
-        chord_diagram('chord_commits_people', "#polyglot_tendencies>.vis", 500, 500, data.people)
-        chord_diagram('chord_commits_people_noself', "#polyglot_tendencies>.vis", 500, 500, data.people_noself)
+        chord_diagram('chord_repos', "#polyglot_tendencies>.vis", data.repos)
+        chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits)
+        chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", data.repos_noself)
+        chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", data.commits_noself)
+        chord_diagram('chord_commits_noself_small', "#polyglot_tendencies>.vis", data.commits_noself, {width: 200, height: 200, labels: false, lang: 'Python'})
+        chord_diagram('chord_commits_people', "#polyglot_tendencies>.vis", data.people, {symmetric: true, lang: 'Java'})
+        chord_diagram('chord_commits_people_noself', "#polyglot_tendencies>.vis", data.people_noself, {symmetric: true})
 
 
     )

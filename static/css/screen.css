@@ -352,6 +352,36 @@ body, html {
   font-family: Aften, sans-serif;
   color: #444; }
 
+.lang0, .javascript {
+  fill-color: #2980b9; }
+
+.lang1, .ruby {
+  fill-color: #e74c3c; }
+
+.lang2, .java {
+  fill-color: #1abc9c; }
+
+.lang3, .python {
+  fill-color: #27ae60; }
+
+.lang4, .shell {
+  fill-color: #8e44ad; }
+
+.lang5, .php {
+  fill-color: #3498db; }
+
+.lang6, .c {
+  fill-color: #f1c40f; }
+
+.lang7, .cpp {
+  fill-color: #f39c12; }
+
+.lang8, .perl {
+  fill-color: #c0392b; }
+
+.lang9, .objc {
+  fill-color: #e67e22; }
+
 #intro {
   max-width: 50em;
   border-left: 1em solid #ecf0f1;
@@ -388,10 +418,12 @@ section {
 #circle text {
   fill: white; }
 #circle .chord {
-  -webkit-transition: fill-opacity 0.1s linear;
-  -moz-transition: fill-opacity 0.1s linear;
-  -ms-transition: fill-opacity 0.1s linear;
-  -o-transition: fill-opacity 0.1s linear;
-  transition: fill-opacity 0.1s linear; }
-#circle:hover .chord.fade {
-  fill-opacity: 0.075; }
+  -webkit-transition: all 0.1s linear;
+  -moz-transition: all 0.1s linear;
+  -ms-transition: all 0.1s linear;
+  -o-transition: all 0.1s linear;
+  transition: all 0.1s linear;
+  stroke-width: 1;
+  stroke: white; }
+#circle:hover .chord.fade, #circle.permafade .chord.fade {
+  opacity: 0.075; }

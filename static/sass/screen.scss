@@ -52,6 +52,18 @@ body, html {
     padding: 2em 0 2em 4em;
 }
 
+.lang0, .javascript { fill-color: $color-belize-hole; }
+.lang1, .ruby { fill-color: $color-alizarin; }
+.lang2, .java { fill-color: $color-turquoise; }
+.lang3, .python { fill-color: $color-nephritis; }
+.lang4, .shell { fill-color: $color-wisteria; }
+.lang5, .php { fill-color: $color-peter-river; }
+.lang6, .c { fill-color: $color-sunflower; }
+.lang7, .cpp { fill-color: $color-orange; }
+.lang8, .perl { fill-color: $color-pomegranate; }
+.lang9, .objc { fill-color: $color-carrot; }
+
+
 #intro {
     @include row;
     h1 {
@@ -99,11 +111,15 @@ section {
     }
 
     .chord {
-        @include transition (fill-opacity 0.1s linear);
+        @include transition (all 0.1s linear);
+        stroke-width: 1;
+        stroke: white;
     }
-    &:hover .chord.fade {
-        // fill: $color-clouds !important;
-        fill-opacity: 0.075;
+    &:hover, &.permafade {
+       .chord.fade {
+               // fill: $color-clouds !important;
+               opacity: 0.075;
+           }
     }
 
 }
