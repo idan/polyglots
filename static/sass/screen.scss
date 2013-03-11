@@ -2,6 +2,17 @@
 @import "colors";
 @import "bourbon/bourbon";
 
+.lang0, .javascript { fill-color: $color-belize-hole; }
+.lang1, .ruby { fill-color: $color-alizarin; }
+.lang2, .java { fill-color: $color-turquoise; }
+.lang3, .python { fill-color: $color-nephritis; }
+.lang4, .shell { fill-color: $color-wisteria; }
+.lang5, .php { fill-color: $color-peter-river; }
+.lang6, .c { fill-color: $color-sunflower; }
+.lang7, .cpp { fill-color: $color-orange; }
+.lang8, .perl { fill-color: $color-pomegranate; }
+.lang9, .objc { fill-color: $color-carrot; }
+
 @mixin font-feature-settings($settings...) {
     @include prefixer(font-feature-settings, $settings, webkit moz spec);
 }
@@ -28,6 +39,11 @@
                    $weight: 400,
                    $style: normal);
 
+@mixin row {
+    max-width: 50em;
+    border-left: 1em solid $color-clouds;
+    padding: 2em 0 2em 4em;
+}
 
 * {
     @include box-sizing(border-box);
@@ -41,27 +57,19 @@ body, html {
     color: #444;
 }
 
-// .wrap {
-//   width: 60em;
-//   margin: 0 auto;
-// }
 
-@mixin row {
-    max-width: 50em;
-    border-left: 1em solid $color-clouds;
-    padding: 2em 0 2em 4em;
+a {
+    color: $color-wet-asphalt;
+    @include transition(color 0.1s linear);
+    &:visited {
+        color: $color-belize-hole;
+    }
+    &:hover {
+        color: $color-peter-river;
+    }
 }
 
-.lang0, .javascript { fill-color: $color-belize-hole; }
-.lang1, .ruby { fill-color: $color-alizarin; }
-.lang2, .java { fill-color: $color-turquoise; }
-.lang3, .python { fill-color: $color-nephritis; }
-.lang4, .shell { fill-color: $color-wisteria; }
-.lang5, .php { fill-color: $color-peter-river; }
-.lang6, .c { fill-color: $color-sunflower; }
-.lang7, .cpp { fill-color: $color-orange; }
-.lang8, .perl { fill-color: $color-pomegranate; }
-.lang9, .objc { fill-color: $color-carrot; }
+
 
 
 #intro {
