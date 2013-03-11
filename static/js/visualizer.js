@@ -145,7 +145,9 @@
       chord_diagram('chord_commits', "#polyglot_tendencies>.vis", 500, 500, data.commits);
       chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", 500, 500, data.repos_noself);
       chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", 500, 500, data.commits_noself);
-      return chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", 300, 300, data.commits_noself, null, false);
+      chord_diagram('chord_commits_noself2', "#polyglot_tendencies>.vis", 300, 300, data.commits_noself, null, false);
+      chord_diagram('chord_commits_people', "#polyglot_tendencies>.vis", 500, 500, data.people);
+      return chord_diagram('chord_commits_people_noself', "#polyglot_tendencies>.vis", 500, 500, data.people_noself);
     });
   });
 
