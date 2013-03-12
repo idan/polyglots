@@ -42,7 +42,6 @@ get_language_rank = (language) ->
     return _.find(languages, (l) -> return l.name == language).rank
 
 
-
 chord_defaults = {
     width: 500,
     height: 500,
@@ -51,7 +50,7 @@ chord_defaults = {
     lang: null # pin the chart to a specific language
 }
 
-chord_diagram = (id, el, data, opts) ->
+chord_diagram = (prefix, el, data, opts) ->
     opts = _.defaults(opts or {}, chord_defaults)
     outerRadius = Math.min(opts.width, opts.height) / 2 - 10
     innerRadius = outerRadius - 24
@@ -75,6 +74,7 @@ chord_diagram = (id, el, data, opts) ->
         .attr("height", opts.height)
       .append("g")
         .attr("id", "circle")
+        .attr("data-prefix", prefix)
         .attr("transform", "translate(" + opts.width / 2 + "," + opts.height / 2 + ")")
 
     svg.append("circle")
@@ -84,9 +84,15 @@ chord_diagram = (id, el, data, opts) ->
     layout.matrix(data)
 
     mouseover = (d, i) ->
+        console.log('mouseover')
         chord.classed("fade", (p) ->
             return p.source.index != i && p.target.index != i
         )
+
+    mouseout = (d, i) ->
+        console.log('mouseout')
+        chord.classed("fade", false)
+        svg.classed("lockfade", false)
 
     # Add a group per neighborhood.
     group = svg.selectAll(".group")
@@ -99,7 +105,7 @@ chord_diagram = (id, el, data, opts) ->
 
     # Add the group arc.
     groupPath = group.append("path")
-        .attr("id", (d, i) -> return "#{id}_group#{i}")
+        .attr("id", (d, i) -> return "#{prefix}_group#{i}")
         .attr("d", arc)
         .style("fill", (d, i) -> return languages[i].color)
 
@@ -111,7 +117,7 @@ chord_diagram = (id, el, data, opts) ->
             .attr("dy", 15)
 
         groupText.append("textPath")
-            .attr("xlink:href", (d, i) -> return "##{id}_group#{i}")
+            .attr("xlink:href", (d, i) -> return "##{prefix}_group#{i}")
             .text((d, i) -> return languages[i].name );
 
         # Remove the labels that don't fit
@@ -143,6 +149,7 @@ chord_diagram = (id, el, data, opts) ->
         )
     else
         group.on('mouseover', mouseover)
+        group.on('mouseout', mouseout)
 
 
 $ ->
@@ -151,6 +158,18 @@ $ ->
         chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself)
         chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself)
 
+
+    $('a.chordlang').on('click', (event) ->
+        event.preventDefault()
+        rank = get_language_rank($(this).attr('data-lang'))
+        svg = $(this).closest('.row').find('#circle')
+        d3svg = d3.select(svg[0])
+        d3svg.classed('lockfade', true)
+        chord = d3svg.selectAll('.chord')
+        chord.classed("fade", (p) ->
+            return p.source.index != rank && p.target.index != rank
+        )
+    )
         # chord_diagram('chord_cpp_small', ".chord_cpp>.vis", data.repos, {width: 300, height: 300, labels: false, lang: 'Shell'})
         # chord_diagram('chord_ruby_small', ".chord_ruby>.vis", data.repos, {width: 300, height: 300, labels: false, lang: 'Ruby'})
         # chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits)

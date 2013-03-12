@@ -557,3 +557,100 @@ section {
   stroke: white; }
 #circle:hover .chord.fade, #circle.permafade .chord.fade, #circle.lockfade .chord.fade {
   opacity: 0.075; }
+
+a.chordlang {
+  display: inline-block;
+  padding: 0 0.2em;
+  border-radius: 2px;
+  color: white;
+  text-decoration: none; }
+  a.chordlang[data-lang="JavaScript"] {
+    background-color: #2980b9;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="JavaScript"]:hover {
+      background-color: #409ad5; }
+  a.chordlang[data-lang="Ruby"] {
+    background-color: #e74c3c;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="Ruby"]:hover {
+      background-color: #ed7669; }
+  a.chordlang[data-lang="Java"] {
+    background-color: #1abc9c;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="Java"]:hover {
+      background-color: #28e1bd; }
+  a.chordlang[data-lang="Python"] {
+    background-color: #27ae60;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="Python"]:hover {
+      background-color: #36d278; }
+  a.chordlang[data-lang="Shell"] {
+    background-color: #8e44ad;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="Shell"]:hover {
+      background-color: #a563c1; }
+  a.chordlang[data-lang="PHP"] {
+    background-color: #3498db;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="PHP"]:hover {
+      background-color: #5faee3; }
+  a.chordlang[data-lang="C"] {
+    background-color: #f1c40f;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="C"]:hover {
+      background-color: #f4d03f; }
+  a.chordlang[data-lang="C++"] {
+    background-color: #f39c12;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="C++"]:hover {
+      background-color: #f5b043; }
+  a.chordlang[data-lang="Perl"] {
+    background-color: #c0392b;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="Perl"]:hover {
+      background-color: #d65548; }
+  a.chordlang[data-lang="Objective-C"] {
+    background-color: #e67e22;
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -ms-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear; }
+    a.chordlang[data-lang="Objective-C"]:hover {
+      background-color: #eb9950; }

@@ -266,4 +266,27 @@ section {
 
 }
 
-
+@mixin language_link($color) {
+    background-color: $color;
+    @include transition(background-color 0.1s linear);
+    &:hover {
+        background-color: lighten($color, 10%);
+    }
+}
+a.chordlang {
+    display: inline-block;
+    padding: 0 0.2em;
+    border-radius: 2px;
+    color: white;
+    text-decoration: none;
+    &[data-lang="JavaScript"] { @include language_link($color-belize-hole); }
+    &[data-lang="Ruby"] { @include language_link($color-alizarin); }
+    &[data-lang="Java"] { @include language_link($color-turquoise); }
+    &[data-lang="Python"] { @include language_link($color-nephritis); }
+    &[data-lang="Shell"] { @include language_link($color-wisteria); }
+    &[data-lang="PHP"] { @include language_link($color-peter-river); }
+    &[data-lang="C"] { @include language_link($color-sunflower); }
+    &[data-lang="C++"] { @include language_link($color-orange); }
+    &[data-lang="Perl"] { @include language_link($color-pomegranate); }
+    &[data-lang="Objective-C"] { @include language_link($color-carrot); }
+}

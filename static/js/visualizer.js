@@ -103,8 +103,8 @@
     lang: null
   };
 
-  chord_diagram = function(id, el, data, opts) {
-    var arc, chord, formatPercent, group, groupPath, groupText, innerRadius, layout, mouseover, outerRadius, path, rank, svg;
+  chord_diagram = function(prefix, el, data, opts) {
+    var arc, chord, formatPercent, group, groupPath, groupText, innerRadius, layout, mouseout, mouseover, outerRadius, path, rank, svg;
     opts = _.defaults(opts || {}, chord_defaults);
     outerRadius = Math.min(opts.width, opts.height) / 2 - 10;
     innerRadius = outerRadius - 24;
@@ -112,27 +112,33 @@
     arc = d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius);
     layout = d3.layout.chord().padding(.04).sortSubgroups(d3.descending).sortChords(d3.ascending);
     path = d3.svg.chord().radius(innerRadius);
-    svg = d3.select(el).append("svg").attr("width", opts.width).attr("height", opts.height).append("g").attr("id", "circle").attr("transform", "translate(" + opts.width / 2 + "," + opts.height / 2 + ")");
+    svg = d3.select(el).append("svg").attr("width", opts.width).attr("height", opts.height).append("g").attr("id", "circle").attr("data-prefix", prefix).attr("transform", "translate(" + opts.width / 2 + "," + opts.height / 2 + ")");
     svg.append("circle").attr("r", outerRadius);
     layout.matrix(data);
     mouseover = function(d, i) {
+      console.log('mouseover');
       return chord.classed("fade", function(p) {
         return p.source.index !== i && p.target.index !== i;
       });
+    };
+    mouseout = function(d, i) {
+      console.log('mouseout');
+      chord.classed("fade", false);
+      return svg.classed("lockfade", false);
     };
     group = svg.selectAll(".group").data(layout.groups).enter().append("g").attr("class", "group");
     group.append("title").text(function(d, i) {
       return "" + languages[i].name;
     });
     groupPath = group.append("path").attr("id", function(d, i) {
-      return "" + id + "_group" + i;
+      return "" + prefix + "_group" + i;
     }).attr("d", arc).style("fill", function(d, i) {
       return languages[i].color;
     });
     if (opts.labels) {
       groupText = group.append("text").attr("x", 6).attr("dy", 15);
       groupText.append("textPath").attr("xlink:href", function(d, i) {
-        return "#" + id + "_group" + i;
+        return "#" + prefix + "_group" + i;
       }).text(function(d, i) {
         return languages[i].name;
       });
@@ -154,7 +160,8 @@
         return d.source.index !== rank && d.target.index !== rank;
       });
     } else {
-      return group.on('mouseover', mouseover);
+      group.on('mouseover', mouseover);
+      return group.on('mouseout', mouseout);
     }
   };
 
@@ -163,7 +170,18 @@
       chord_diagram('repos_all', ".all_polyglots>.vis", data.repos);
       chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself);
       return chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself);
-    });
+    }, $('a.chordlang').on('click', function(event) {
+      var chord, d3svg, rank, svg;
+      event.preventDefault();
+      rank = get_language_rank($(this).attr('data-lang'));
+      svg = $(this).closest('.row').find('#circle');
+      d3svg = d3.select(svg[0]);
+      d3svg.classed('lockfade', true);
+      chord = d3svg.selectAll('.chord');
+      return chord.classed("fade", function(p) {
+        return p.source.index !== rank && p.target.index !== rank;
+      });
+    }));
   });
 
 }).call(this);
