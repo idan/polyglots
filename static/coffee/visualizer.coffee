@@ -196,7 +196,7 @@ $ ->
         chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself)
         chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself)
         chord_diagram('chord_commits_people_noself', ".by_people>.vis", data.people_noself, {symmetric: true, ticks: true})
-
+    )
 
     # focus a chord chart on a specific language
     $('a.chordlang').on('click', (event) ->
@@ -210,17 +210,4 @@ $ ->
             return p.source.index != rank && p.target.index != rank
         )
     )
-
-
-
-        # chord_diagram('chord_cpp_small', ".chord_cpp>.vis", data.repos, {width: 300, height: 300, labels: false, lang: 'Shell'})
-        # chord_diagram('chord_ruby_small', ".chord_ruby>.vis", data.repos, {width: 300, height: 300, labels: false, lang: 'Ruby'})
         # chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits)
-        # chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", data.repos_noself)
-        # chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", data.commits_noself)
-        # chord_diagram('chord_commits_noself_small', "#polyglot_tendencies>.vis", data.commits_noself, {width: 200, height: 200, labels: false, lang: 'Python'})
-        # chord_diagram('chord_commits_people', "#polyglot_tendencies>.vis", data.people, {symmetric: true, lang: 'Java'})
-        # chord_diagram('chord_commits_people_noself', "#polyglot_tendencies>.vis", data.people_noself, {symmetric: true})
-
-
-    )

@@ -194,7 +194,7 @@
   };
 
   $(function() {
-    return d3.json("static/data/language_adjacency.json", function(error, data) {
+    d3.json("static/data/language_adjacency.json", function(error, data) {
       chord_diagram('repos_all', ".all_polyglots>.vis", data.repos);
       chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself);
       chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself);
@@ -202,7 +202,8 @@
         symmetric: true,
         ticks: true
       });
-    }, $('a.chordlang').on('click', function(event) {
+    });
+    return $('a.chordlang').on('click', function(event) {
       var chord, d3svg, rank, svg;
       event.preventDefault();
       rank = get_language_rank($(this).attr('data-lang'));
@@ -213,7 +214,7 @@
       return chord.classed("fade", function(p) {
         return p.source.index !== rank && p.target.index !== rank;
       });
-    }));
+    });
   });
 
 }).call(this);
