@@ -379,6 +379,7 @@ body, html {
   margin: 0;
   padding: 0;
   background: white;
+  min-width: 1280px;
   font-family: Aften, sans-serif;
   color: #2c3e50; }
 
