@@ -47,18 +47,46 @@
                     </a>
 
                 </nav>
-                <p class="scrollguide">or just scroll down to dig into the data <span class="arrow">⬇</span> </p>
+                <p class="guide">or just scroll down to dig into the data <span class="arrow">⬇</span> </p>
             </header>
 
             <section id="polyglot_tendencies">
                 <header>
                     <h1 data-chapter="Chapter 1">Polyglot Tendencies</h1>
-                    <p class="lede">There are 44,389 registered github accounts with at least one commit to a ranked repository. Of those, 84% only make commits to ranked repositories in their language. But the remaining seven thousand have made a contribution to a ranked repositories in multiple languages. How do those polyglots behave?</p>
+                    <p class="lede"><span class="sc">There are 44,389 registered GitHub accounts</span> with at least one commit to a ranked repository. Of those, 84% only make commits to ranked repositories in their language. But the remaining seven thousand have made a contribution to a ranked repositories in multiple languages. How do those polyglots behave?</p>
                 </header>
-                
-                <p>This is a chord diagram which depicts the ranked repositories, and the contributors who have made at least one commit in a given language to the ranked repositories. Connections between two languages indicate developers who have made contributions to a top-200 repo in more than one language. Links are colored by the more frequent source; more JavaScript developers contribute to Ruby than the other way around:</p>
-                <div class="all_polyglots"></div>
-                <p>Unsurprisingly, most developers stick to what they already know. Every language has a significant link to itself, often larger than all the rest of the links combined—developers of a language tend to write other things in the same language.</p>
+
+                <article class="row all_polyglots">
+                    <div class="vis left_display"></div>
+                    <div class="full">
+                        <h1>Everything &amp; Everybody</h1>
+                        <p>This is a chord diagram which depicts the ranked repositories, and the contributors who have made at least one commit in a given language to the ranked repositories. Connections between two languages indicate developers who have made contributions to a top-200 repo in more than one language. Links are colored by the more frequent source; for example, more JavaScript developers contribute to Ruby than the other way around:</p>
+                        <p>And what of those 84% who only contribute to one language? Their contributions (and those of polyglots who often contribute to multiple repositories in one language) are represented as a language's recursive link to itself, which looks like a small hill. For most languages, this represents most of the contributions to that language.</p>
+                        <p class="guide"><span class="arrow">⬅</span> go on, play with it</p>
+                    </div>
+                </article>
+
+                <article class="row no_self_links">
+                    <div class="vis left_display"></div>
+                    <div class="full">
+                        <h1>Just the Polyglots</h1>
+                        <p>Here, we're looking at the same data with internal contributions removed, making the cross-language activity clearer. The thickness of each link is the magnitude of cross-language repository contributions, by number of repositories contributed to.</p>
+                        <p>Languages like Ruby and C sport a rainbow of links, indicating that developers of other languages frequently contribute to Ruby and C repositories as well. On the other hand, C++ appears to be less accessible: for any pairing with another language, more developers who contribute to C++ also contribute to the other language than the reverse.</p>
+                        <p class="guide"><span class="arrow">⬅</span> tap or hover on a language to focus on it</p>
+                    </div>
+                </article>
+
+                <article class="row by_commits">
+                    <div class="vis left_display"></div>
+                    <div class="full">
+                        <h1>By Commits</h1>
+                        <p>Not all contributions to a repository are equal! While a commit can contain everything from a one-liner to a full-on refactor, it is a more detailed metric of contribution than a simple count of repositories contributed to.</p>
+                        <p>With greater detail, a different picture emerges. By number of commits, it turns out that <a href="#commits_noself_group7">C++</a> projects receive more love than they get, and Ruby developers give more than they get. Shell script developers remain significantly more likely to make commits in other languages than the reverse.</p>
+                        <p class="guide"><span class="arrow">⬅</span> got the idea by now? good.</p>
+                    </div>
+                </article>
+
+                <!--
                 <div class="row">
                     <figure class="chord_cpp half">
                         <div class="vis"></div>
@@ -69,6 +97,7 @@
                         <figcaption>Ruby is the opposite: developers from other languages like to dabble in Ruby.</figcaption>
                     </figure>
                 </div>
+                -->
             </section>
 
         </div>

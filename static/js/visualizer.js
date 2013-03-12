@@ -96,8 +96,8 @@
   };
 
   chord_defaults = {
-    width: 600,
-    height: 600,
+    width: 500,
+    height: 500,
     labels: true,
     symmetric: false,
     lang: null
@@ -160,19 +160,9 @@
 
   $(function() {
     return d3.json("static/data/language_adjacency.json", function(error, data) {
-      chord_diagram('chord_repos', "#polyglot_tendencies>.all_polyglots", data.repos);
-      chord_diagram('chord_cpp_small', ".chord_cpp>.vis", data.repos, {
-        width: 200,
-        height: 200,
-        labels: false,
-        lang: 'Shell'
-      });
-      return chord_diagram('chord_ruby_small', ".chord_ruby>.vis", data.repos, {
-        width: 200,
-        height: 200,
-        labels: false,
-        lang: 'Ruby'
-      });
+      chord_diagram('repos_all', ".all_polyglots>.vis", data.repos);
+      chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself);
+      return chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself);
     });
   });
 

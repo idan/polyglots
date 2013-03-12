@@ -397,22 +397,31 @@ a {
 .sc {
   font-family: "Aften SC", sans-serif; }
 
+.guide {
+  font-size: 1em;
+  color: #bdc3c7;
+  font-style: italic;
+  margin-top: 1.5em; }
+  .guide .arrow {
+    color: #f39c12;
+    padding: 0 0.5em; }
+
 #intro {
   border-left: 1em solid #ecf0f1;
   padding: 2em 2em 2em 3em;
   min-height: 100vh; }
   #intro h1 {
     font-weight: normal;
-    font-size: 5em;
+    font-size: 4em;
     margin-top: 0;
     margin-bottom: 0.5em;
     padding-top: 0.25em; }
   #intro p {
-    font-size: 1.25em;
+    font-size: 1.125em;
     max-width: 45em;
     line-height: 1.75em; }
     #intro p.lede {
-      font-size: 2em;
+      font-size: 1.5em;
       max-width: 40em;
       line-height: 1.5em;
       margin: 0; }
@@ -452,13 +461,6 @@ a {
         color: #3498db; }
       #intro nav a:hover img {
         opacity: 1.0; }
-  #intro .scrollguide {
-    font-size: 1em;
-    color: #bdc3c7;
-    font-style: italic;
-    margin-top: 1.5em; }
-    #intro .scrollguide .arrow {
-      color: #f39c12; }
 
 section {
   border-left-style: solid;
@@ -467,7 +469,8 @@ section {
   padding: 0 0 2em; }
   section header {
     background-color: #7f8c8d;
-    padding: 4em 2em 3em 3em; }
+    padding: 4em 2em 3em 3em;
+    margin-bottom: 2em; }
     section header h1 {
       color: white;
       font-weight: normal;
@@ -499,7 +502,8 @@ section {
     max-width: 45em;
     line-height: 1.75em; }
   section .row {
-    *zoom: 1; }
+    *zoom: 1;
+    padding: 2em 2em 2em 3em; }
     section .row:before, section .row:after {
       content: " ";
       display: table; }
@@ -510,10 +514,24 @@ section {
       margin-right: 5%; }
       section .row > *:last-child {
         margin-right: 0; }
+    section .row > .full {
+      max-width: 35em;
+      min-width: 20em;
+      width: auto; }
     section .row > .half {
       width: 47.5%; }
     section .row > .third {
       width: 30%; }
+    section .row > .left_display {
+      width: 550px;
+      text-align: center;
+      margin-right: 2em; }
+  section article h1 {
+    font-family: "Aften SC", sans-serif;
+    font-weight: normal;
+    color: #7f8c8d;
+    font-size: 1.5em;
+    margin-top: 0; }
   section figure {
     display: block;
     text-align: center; }
@@ -537,5 +555,5 @@ section {
   transition: all 0.1s linear;
   stroke-width: 1;
   stroke: white; }
-#circle:hover .chord.fade, #circle.permafade .chord.fade {
+#circle:hover .chord.fade, #circle.permafade .chord.fade, #circle.lockfade .chord.fade {
   opacity: 0.075; }

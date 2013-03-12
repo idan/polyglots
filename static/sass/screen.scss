@@ -68,7 +68,16 @@ a {
     font-family: "Aften SC", sans-serif;
 }
 
-
+.guide {
+    font-size: 1em;
+    color: $color-silver;
+    font-style: italic;
+    margin-top: 1.5em;
+    .arrow {
+        color: $color-orange;
+        padding: 0 0.5em;
+    }
+}
 
 
 #intro {
@@ -77,17 +86,17 @@ a {
     min-height: 100vh;
     h1 {
         font-weight: normal;
-        font-size: 5em;
+        font-size: 4em;
         margin-top:0;
         margin-bottom: 0.5em;
         padding-top: 0.25em;
     }
     p {
-        font-size: 1.25em;
+        font-size: 1.125em;
         max-width: 45em;
         line-height: 1.75em;
         &.lede {
-            font-size: 2em;
+            font-size: 1.5em;
             max-width: 40em;
             line-height: 1.5em;
             margin: 0;
@@ -131,15 +140,7 @@ a {
             }
         }
     }
-    .scrollguide {
-        font-size: 1em;
-        color: $color-silver;
-        font-style: italic;
-        margin-top: 1.5em;
-        .arrow {
-            color: $color-orange;
-        }
-    }
+
 
 }
 
@@ -151,6 +152,7 @@ section {
     header {
         background-color: $color-asbestos;
         padding: 4em 2em 3em 3em;
+        margin-bottom: 2em;
         h1 {
             color: white;
             font-weight: normal;
@@ -190,6 +192,7 @@ section {
     }
     .row {
         @include clearfix;
+        padding: 2em 2em 2em 3em;
         &>* {
             float: left;
             margin-right: 5%;
@@ -197,11 +200,31 @@ section {
                 margin-right: 0;
             }
         }
+        &>.full {
+            max-width: 35em;
+            min-width: 20em;
+            width: auto;
+        }
         &>.half {
             width: 47.5%;
         }
         &>.third {
             width: 30%;
+        }
+        &>.left_display {
+            width: 550px;
+            text-align: center;
+            margin-right: 2em;
+        }
+    }
+
+    article {
+        h1 {
+            font-family: "Aften SC", sans-serif;
+            font-weight: normal;
+            color: $color-asbestos;
+            font-size: 1.5em;
+            margin-top: 0;
         }
     }
     figure {
@@ -234,7 +257,7 @@ section {
         stroke-width: 1;
         stroke: white;
     }
-    &:hover, &.permafade {
+    &:hover, &.permafade, &.lockfade {
        .chord.fade {
                // fill: $color-clouds !important;
                opacity: 0.075;

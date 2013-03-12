@@ -44,8 +44,8 @@ get_language_rank = (language) ->
 
 
 chord_defaults = {
-    width: 600,
-    height: 600,
+    width: 500,
+    height: 500,
     labels: true,
     symmetric: false, # symmetric colors chords by source on hover,
     lang: null # pin the chart to a specific language
@@ -147,9 +147,12 @@ chord_diagram = (id, el, data, opts) ->
 
 $ ->
     d3.json("static/data/language_adjacency.json", (error, data) ->
-        chord_diagram('chord_repos', "#polyglot_tendencies>.all_polyglots", data.repos)
-        chord_diagram('chord_cpp_small', ".chord_cpp>.vis", data.repos, {width: 200, height: 200, labels: false, lang: 'Shell'})
-        chord_diagram('chord_ruby_small', ".chord_ruby>.vis", data.repos, {width: 200, height: 200, labels: false, lang: 'Ruby'})
+        chord_diagram('repos_all', ".all_polyglots>.vis", data.repos)
+        chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself)
+        chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself)
+
+        # chord_diagram('chord_cpp_small', ".chord_cpp>.vis", data.repos, {width: 300, height: 300, labels: false, lang: 'Shell'})
+        # chord_diagram('chord_ruby_small', ".chord_ruby>.vis", data.repos, {width: 300, height: 300, labels: false, lang: 'Ruby'})
         # chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits)
         # chord_diagram('chord_repos_noself', "#polyglot_tendencies>.vis", data.repos_noself)
         # chord_diagram('chord_commits_noself', "#polyglot_tendencies>.vis", data.commits_noself)
