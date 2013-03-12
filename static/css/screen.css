@@ -561,7 +561,7 @@ section {
   fill: white; }
 #circle .ticks text {
   fill: #bdc3c7;
-  font-size: 0.5em; }
+  font-size: 0.6em; }
 #circle .chord {
   -webkit-transition: all 0.1s linear;
   -moz-transition: all 0.1s linear;
