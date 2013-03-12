@@ -39,11 +39,6 @@
                    $weight: 400,
                    $style: normal);
 
-@mixin row {
-    max-width: 50em;
-    border-left: 1em solid $color-clouds;
-    padding: 2em 0 2em 4em;
-}
 
 * {
     @include box-sizing(border-box);
@@ -69,32 +64,124 @@ a {
     }
 }
 
+.sc {
+    font-family: "Aften SC", sans-serif;
+}
+
 
 
 
 #intro {
-    @include row;
+    border-left: 1em solid $color-clouds;
+    padding: 2em 2em 2em 3em;
+    min-height: 100vh;
     h1 {
         font-weight: normal;
-        font-size: 3em;
-
+        font-size: 5em;
+        margin-top:0;
+        margin-bottom: 0.5em;
+        padding-top: 0.25em;
     }
     p {
-        font-size: 1.125em;
+        font-size: 1.25em;
         max-width: 45em;
         line-height: 1.75em;
+        &.lede {
+            font-size: 2em;
+            max-width: 40em;
+            line-height: 1.5em;
+            margin: 0;
+        }
     }
+    nav {
+        @include clearfix;
+        a {
+            display: block;
+            float: left;
+            margin-right: 1em;
+            text-decoration: none;
+            width: 200px;
+            p, img {
+                @include transition(all 0.1s linear);
+            }
+            .chapter {
+                font-style: italic;
+                color: $color-silver;
+                margin: 0;
+                font-size: 0.75em;
+            }
+            .title {
+                color: $color-asbestos;
+                font-size: 1.125em;
+                margin: 0;
+            }
+            img {
+                opacity: 0.5;
+            }
+            &:hover {
+                .chapter {
+                    color: $color-asbestos;
+                }
+                .title {
+                    color: $color-peter-river;
+                }
+                img {
+                    opacity: 1.0;
+                }
+            }
+        }
+    }
+    .scrollguide {
+        font-size: 1em;
+        color: $color-silver;
+        font-style: italic;
+        margin-top: 1.5em;
+        .arrow {
+            color: $color-orange;
+        }
+    }
+
 }
 
 section {
-    @include row;
+    border-left-style: solid;
+    border-left-width: 1em;
+    border-left-color: $color-clouds;
+    padding: 0 0 2em;
     header {
-        max-width: 36em;
-    }
-    h1 {
-        color: $color-wet-asphalt;
-        font-weight: normal;
-        font-family: "Aften SC", sans-serif;
+        background-color: $color-asbestos;
+        padding: 4em 2em 3em 3em;
+        h1 {
+            color: white;
+            font-weight: normal;
+            font-size: 4em;
+            margin-top:0;
+            margin-bottom: 1.25em;
+            font-weight: normal;
+            &:before {
+                display: block;
+                content: attr(data-chapter);
+                color: $color-clouds;
+                font-size: 0.3em;
+                font-family: "Aften SC", sans-serif;
+                opacity: 0.5;
+                text-transform: lowercase;
+                letter-spacing: 0.25em;
+                padding-bottom: 0.5em;
+            }
+
+        }
+        p {
+            color: $color-clouds;
+            font-size: 1.25em;
+            max-width: 45em;
+            line-height: 1.75em;
+            &.lede {
+                font-size: 2em;
+                max-width: 40em;
+                line-height: 1.5em;
+            }
+        }
     }
     p {
         font-size: 1.125em;
@@ -105,15 +192,21 @@ section {
         @include clearfix;
         &>* {
             float: left;
-            width: 30%;
             margin-right: 5%;
             &:last-child {
                 margin-right: 0;
             }
         }
+        &>.half {
+            width: 47.5%;
+        }
+        &>.third {
+            width: 30%;
+        }
     }
     figure {
         display: block;
+        text-align: center;
     }
     figcaption {
         font-size: 0.85em;

@@ -394,28 +394,106 @@ a {
   a:hover {
     color: #3498db; }
 
+.sc {
+  font-family: "Aften SC", sans-serif; }
+
 #intro {
-  max-width: 50em;
   border-left: 1em solid #ecf0f1;
-  padding: 2em 0 2em 4em; }
+  padding: 2em 2em 2em 3em;
+  min-height: 100vh; }
   #intro h1 {
     font-weight: normal;
-    font-size: 3em; }
+    font-size: 5em;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    padding-top: 0.25em; }
   #intro p {
-    font-size: 1.125em;
+    font-size: 1.25em;
     max-width: 45em;
     line-height: 1.75em; }
+    #intro p.lede {
+      font-size: 2em;
+      max-width: 40em;
+      line-height: 1.5em;
+      margin: 0; }
+  #intro nav {
+    *zoom: 1; }
+    #intro nav:before, #intro nav:after {
+      content: " ";
+      display: table; }
+    #intro nav:after {
+      clear: both; }
+    #intro nav a {
+      display: block;
+      float: left;
+      margin-right: 1em;
+      text-decoration: none;
+      width: 200px; }
+      #intro nav a p, #intro nav a img {
+        -webkit-transition: all 0.1s linear;
+        -moz-transition: all 0.1s linear;
+        -ms-transition: all 0.1s linear;
+        -o-transition: all 0.1s linear;
+        transition: all 0.1s linear; }
+      #intro nav a .chapter {
+        font-style: italic;
+        color: #bdc3c7;
+        margin: 0;
+        font-size: 0.75em; }
+      #intro nav a .title {
+        color: #7f8c8d;
+        font-size: 1.125em;
+        margin: 0; }
+      #intro nav a img {
+        opacity: 0.5; }
+      #intro nav a:hover .chapter {
+        color: #7f8c8d; }
+      #intro nav a:hover .title {
+        color: #3498db; }
+      #intro nav a:hover img {
+        opacity: 1.0; }
+  #intro .scrollguide {
+    font-size: 1em;
+    color: #bdc3c7;
+    font-style: italic;
+    margin-top: 1.5em; }
+    #intro .scrollguide .arrow {
+      color: #f39c12; }
 
 section {
-  max-width: 50em;
-  border-left: 1em solid #ecf0f1;
-  padding: 2em 0 2em 4em; }
+  border-left-style: solid;
+  border-left-width: 1em;
+  border-left-color: #ecf0f1;
+  padding: 0 0 2em; }
   section header {
-    max-width: 36em; }
-  section h1 {
-    color: #34495e;
-    font-weight: normal;
-    font-family: "Aften SC", sans-serif; }
+    background-color: #7f8c8d;
+    padding: 4em 2em 3em 3em; }
+    section header h1 {
+      color: white;
+      font-weight: normal;
+      font-size: 4em;
+      margin-top: 0;
+      margin-bottom: 1.25em;
+      font-weight: normal; }
+      section header h1:before {
+        display: block;
+        content: attr(data-chapter);
+        color: #ecf0f1;
+        font-size: 0.3em;
+        font-family: "Aften SC", sans-serif;
+        opacity: 0.5;
+        text-transform: lowercase;
+        letter-spacing: 0.25em;
+        padding-bottom: 0.5em; }
+    section header p {
+      color: #ecf0f1;
+      font-size: 1.25em;
+      max-width: 45em;
+      line-height: 1.75em; }
+      section header p.lede {
+        font-size: 2em;
+        max-width: 40em;
+        line-height: 1.5em; }
   section p {
     font-size: 1.125em;
     max-width: 45em;
@@ -429,12 +507,16 @@ section {
       clear: both; }
     section .row > * {
       float: left;
-      width: 30%;
       margin-right: 5%; }
       section .row > *:last-child {
         margin-right: 0; }
+    section .row > .half {
+      width: 47.5%; }
+    section .row > .third {
+      width: 30%; }
   section figure {
-    display: block; }
+    display: block;
+    text-align: center; }
   section figcaption {
     font-size: 0.85em;
     font-style: italic; }
