@@ -2,8 +2,8 @@ import os
 import sys
 import copy
 from collections import Counter, OrderedDict
+import csv
 import pymongo
-
 
 # Setup mongodb
 if 'MONGOHQ_URL' not in os.environ:
@@ -12,6 +12,9 @@ MONGOHQ_URL = os.environ['MONGOHQ_URL']
 MONGO_DB_NAME = MONGOHQ_URL.split('/')[-1]
 conn = pymongo.Connection(host=MONGOHQ_URL)
 db = conn[MONGO_DB_NAME]
+
+langs = ['JavaScript', 'Ruby', 'Java', 'Python', 'Shell',
+         'PHP', 'C', 'C++', 'Perl', 'Objective-C']
 
 counts = [
     ('JavaScript', 0),
@@ -112,3 +115,27 @@ def adjacency_matrix():
 def remove_identity(matrix):
     for i in xrange(len(matrix)):
         matrix[i][i] = 0
+
+
+def dump_repo_data():
+    repos = list(db.repos.find(fields=['name', 'user', 'rank', 'contributor_count', 'authors_count', 'forks_count', 'size', 'num_commits', 'latest_commit', 'watchers_count', 'language', 'oldest_commit', 'disk_bytes']))
+    for repo in repos:
+        if 'latest_commit' in repo:
+            repo['latest_commit'] = repo['latest_commit'].isoformat()
+        if 'oldest_commit' in repo:
+            repo['oldest_commit'] = repo['oldest_commit'].isoformat()
+        repo['_id'] = str(repo['_id'])
+
+    fields = ['_id', 'language', 'rank', 'user', 'name', 'authors_count', 'contributor_count', 'disk_bytes', 'forks_count', 'latest_commit',  'num_commits', 'oldest_commit',  'size',  'watchers_count']
+
+    with open('repos.csv', 'wb') as fp:
+        writer = csv.DictWriter(fp, fields)
+        writer.writeheader()
+        for r in sorted(repos, key=repokey):
+            writer.writerow(r)
+
+
+def repokey(r):
+    key = langs.index(r['language']) * 1000
+    key += r['rank']
+    return key
