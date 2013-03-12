@@ -22,8 +22,8 @@
             <header id="intro">
                 <h1>The Polyglots Project</h1>
                 <p class="lede"><span class="sc">The craft of software development</span> has never been neatly cataloged in one, centralized location. Some projects have long been developed in the open, and some have even exposed their development history, but they were islands: disjoint and difficult to connect.</p>
-                <p>These connections between multiple developers and multiple projects are the glue that binds us together into larger developer communities. Until <a href="https://github.com">GitHub</a> came along, we had no way of looking at the myriad of projects through one lens. There are now millions of developers building software of every shape and size on GitHub, and it's time we check ourselves out in the mirror.</p>
-                <p>Our sample dataset is the cream of GitHub: the top 200 repositories for each of the <a href="https://github.com/languages">top ten languages</a>. These are what we'll call the <em>ranked repositories</em>.</p>
+                <p>These connections between multiple developers and multiple projects are the glue that binds us together into larger developer communities. Until <a href="https://github.com">GitHub</a> came along, we had no way of looking at the myriad of projects through one lens. There are now millions of developers building software of every shape and size on GitHub, and it’s time we check ourselves out in the mirror.</p>
+                <p>Our sample dataset is the cream of GitHub: the top 200 repositories for each of the <a href="https://github.com/languages">top ten languages</a>. These are what we’ll call the <em>ranked repositories</em>, built by the <em>ranked contributors</em>, which are the GitHub users who made at least one commit to any of these repositories.</p>
                 <nav>
                     <a href="#">
                         <p class="chapter">Chapter 1</p>
@@ -53,7 +53,7 @@
             <section id="polyglot_tendencies">
                 <header>
                     <h1 data-chapter="Chapter 1">Polyglot Tendencies</h1>
-                    <p class="lede"><span class="sc">There are 44,389 registered GitHub accounts</span> with at least one commit to a ranked repository. 84% of these didn't commit to a ranked repository in another language. The remaining seven thousand have contributed to the top repositories in multiple languages. How do those polyglots behave?</p>
+                    <p class="lede"><span class="sc">There are 44,389 registered GitHub accounts</span> with at least one commit to a ranked repository. 84% of these didn’t commit to a ranked repository in another language. The remaining seven thousand have contributed to the top repositories in multiple languages. How do those polyglots behave?</p>
                 </header>
 
                 <article class="row all_polyglots">
@@ -61,7 +61,7 @@
                     <div class="full">
                         <h1>Everything &amp; Everybody</h1>
                         <p>This is a chord diagram which depicts the ranked repositories, and the contributors who have made at least one commit in a given language to the ranked repositories. Connections between two languages indicate developers who have made contributions to a top-200 repo in more than one language. Links are colored by the more frequent source; for example, more JavaScript developers contribute to Ruby than the other way around:</p>
-                        <p>And what of those 84% who only contribute to one language? Their contributions (and those of polyglots who often contribute to multiple repositories in one language) are represented as a language's recursive link to itself, which looks like a small hill. For most languages, this represents most of the contributions to that language.</p>
+                        <p>And what of those 84% who only contribute to one language? Their contributions (and those of polyglots who often contribute to multiple repositories in one language) are represented as a language’s recursive link to itself, which looks like a small hill. For most languages, this represents most of the contributions to that language.</p>
                         <p class="guide"><span class="arrow">⬅</span> go on, play with it</p>
                     </div>
                 </article>
@@ -70,7 +70,7 @@
                     <div class="vis left_display"></div>
                     <div class="full">
                         <h1>Just the Polyglots</h1>
-                        <p>Here, we're looking at the same data with internal contributions removed, making the cross-language activity clearer. The thickness of each link is the magnitude of cross-language repository contributions, by number of repositories contributed to.</p>
+                        <p>Here, we’re looking at the same data with internal contributions removed, making the cross-language activity clearer. The thickness of each link is the magnitude of cross-language repository contributions, by number of repositories contributed to.</p>
                         <p>Languages like <a href="#" class="chordlang" data-lang="Ruby">Ruby</a> and <a href="#" class="chordlang" data-lang="C">C</a> sport a rainbow of links, indicating that developers of other languages frequently contribute to Ruby and C repositories as well. On the other hand, <a href="#" class="chordlang" data-lang="C++">C++</a> appears to be less accessible: for any pairing with another language, more developers who contribute to C++ also contribute to the other language than the reverse.</p>
                         <p class="guide"><span class="arrow">⬅</span> tap or hover on a language to focus on it</p>
                     </div>
@@ -91,7 +91,7 @@
                     <div class="full">
                         <h1>By People</h1>
                         <p>If we just count the number of polyglot contributors to a specific language, we get the opposite—a coarser measure of cross-language interaction. Here, the links are symmetric, because a developer which commits to any pair of languages is counted once for each side. Tickmarks along the outer edge of each language show the number of contributors to a given language in the ranked respositories.</p>
-                        <p>While <a href="#" class="chordlang" data-lang="JavaScript">JavaScript</a> developers contribute something to every other language, it's clear that they have more than twice the affinity for <a href="#" class="chordlang" data-lang="Ruby">Ruby</a> projects than they have for <a href="#" class="chordlang" data-lang="Python">Python</a> ones.</p>
+                        <p>While <a href="#" class="chordlang" data-lang="JavaScript">JavaScript</a> developers contribute something to every other language, it’s clear that they have more than twice the affinity for <a href="#" class="chordlang" data-lang="Ruby">Ruby</a> projects than they have for <a href="#" class="chordlang" data-lang="Python">Python</a> ones.</p>
                         <p>The language arcs here are also a visual representation of which languages are popular among the 43,389 contributors to the ranked repos. While Python trails <a href="#" class="chordlang" data-lang="Java">Java</a> in popularity, it enjoys more than double the developer mindshare.</p>
                     </div>
                 </article>
@@ -124,13 +124,13 @@
         <script type="text/javascript">
           var _gauges = _gauges || [];
           (function() {
-            var t   = document.createElement('script');
-            t.type  = 'text/javascript';
+            var t   = document.createElement("script");
+            t.type  = "text/javascript";
             t.async = true;
-            t.id    = 'gauges-tracker';
-            t.setAttribute('data-site-id', '513dd3a6f5a1f55991000112');
-            t.src = '//secure.gaug.es/track.js';
-            var s = document.getElementsByTagName('script')[0];
+            t.id    = "gauges-tracker";
+            t.setAttribute("data-site-id", "513dd3a6f5a1f55991000112");
+            t.src = "//secure.gaug.es/track.js";
+            var s = document.getElementsByTagName("script")[0];
             s.parentNode.insertBefore(t, s);
           })();
         </script>
