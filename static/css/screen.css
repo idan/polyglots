@@ -533,32 +533,26 @@ section {
     color: #7f8c8d;
     font-size: 1.5em;
     margin-top: 0; }
-  section figure {
-    display: block;
-    text-align: center; }
-  section figcaption {
-    font-size: 0.85em;
-    font-style: italic; }
 
-#polyglot_tendencies {
+#people {
   border-left-color: #7f8c8d; }
-  #polyglot_tendencies header {
+  #people header {
     background-color: #7f8c8d; }
 
-#language_comparisons {
+#languages {
   border-left-color: #c0392b; }
-  #language_comparisons header {
+  #languages header {
     background-color: #c0392b; }
 
-#native_naturalized {
-  border-left-color: #1abc9c; }
-  #native_naturalized header {
-    background-color: #1abc9c; }
+#repositories {
+  border-left-color: #2980b9; }
+  #repositories header {
+    background-color: #2980b9; }
 
-#github_effect {
-  border-left-color: #3498db; }
-  #github_effect header {
-    background-color: #3498db; }
+#about {
+  border-left-color: #34495e; }
+  #about header {
+    background-color: #34495e; }
 
 #circle circle {
   fill: none;

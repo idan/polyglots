@@ -228,14 +228,6 @@ section {
             margin-top: 0;
         }
     }
-    figure {
-        display: block;
-        text-align: center;
-    }
-    figcaption {
-        font-size: 0.85em;
-        font-style: italic;
-    }
 }
 
 
@@ -244,20 +236,20 @@ section {
     header { background-color: $color; }
 }
 
-#polyglot_tendencies {
+#people {
     @include section_colors($color-asbestos);
 }
 
-#language_comparisons {
+#languages {
     @include section_colors($color-pomegranate);
 }
 
-#native_naturalized {
-    @include section_colors($color-turquoise);
+#repositories {
+    @include section_colors($color-belize-hole);
 }
 
-#github_effect {
-    @include section_colors($color-peter-river);
+#about {
+    @include section_colors($color-wet-asphalt);
 }
 
 #circle {
