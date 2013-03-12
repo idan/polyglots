@@ -100,29 +100,28 @@
     height: 500,
     labels: true,
     symmetric: false,
-    lang: null
+    lang: null,
+    ticks: false
   };
 
   chord_diagram = function(prefix, el, data, opts) {
-    var arc, chord, formatPercent, group, groupPath, groupText, innerRadius, layout, mouseout, mouseover, outerRadius, path, rank, svg;
+    var arc, chord, formatPercent, group, groupPath, groupText, groupTicks, innerRadius, layout, mouseout, mouseover, outerRadius, path, rank, svg, ticks;
     opts = _.defaults(opts || {}, chord_defaults);
-    outerRadius = Math.min(opts.width, opts.height) / 2 - 10;
+    outerRadius = Math.min(opts.width, opts.height) / 2 - 25;
     innerRadius = outerRadius - 24;
     formatPercent = d3.format(".1%");
     arc = d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius);
     layout = d3.layout.chord().padding(.04).sortSubgroups(d3.descending).sortChords(d3.ascending);
     path = d3.svg.chord().radius(innerRadius);
-    svg = d3.select(el).append("svg").attr("width", opts.width).attr("height", opts.height).append("g").attr("id", "circle").attr("data-prefix", prefix).attr("transform", "translate(" + opts.width / 2 + "," + opts.height / 2 + ")");
+    svg = d3.select(el).append("svg").attr("width", opts.width).attr("height", opts.height).classed("chord_diagram", true).append("g").attr("id", "circle").attr("data-prefix", prefix).attr("transform", "translate(" + opts.width / 2 + "," + opts.height / 2 + ")");
     svg.append("circle").attr("r", outerRadius);
     layout.matrix(data);
     mouseover = function(d, i) {
-      console.log('mouseover');
       return chord.classed("fade", function(p) {
         return p.source.index !== i && p.target.index !== i;
       });
     };
     mouseout = function(d, i) {
-      console.log('mouseout');
       chord.classed("fade", false);
       return svg.classed("lockfade", false);
     };
@@ -156,12 +155,41 @@
     if (opts.lang != null) {
       rank = get_language_rank(opts.lang);
       svg.classed("permafade", true);
-      return chord.classed("fade", function(d, i) {
+      chord.classed("fade", function(d, i) {
         return d.source.index !== rank && d.target.index !== rank;
       });
     } else {
       group.on('mouseover', mouseover);
-      return group.on('mouseout', mouseout);
+      group.on('mouseout', mouseout);
+    }
+    if (opts.ticks) {
+      groupTicks = function(d) {
+        var k;
+        k = (d.endAngle - d.startAngle) / d.value;
+        return d3.range(0, d.value, 500).map(function(v, i) {
+          return {
+            angle: v * k + d.startAngle,
+            label: i % 2 ? null : "" + (v / 1000.0) + "k"
+          };
+        });
+      };
+      ticks = svg.append("g").classed('ticks', true).selectAll("g").data(layout.groups).enter().append("g").selectAll("g").data(groupTicks).enter().append("g").attr("transform", function(d) {
+        return "rotate(" + (d.angle * 180 / Math.PI - 90) + ") translate(" + outerRadius + ",0)";
+      });
+      ticks.append("line").attr("x1", 1).attr("y1", 0).attr("x2", 5).attr("y2", 0).style("stroke", "#000");
+      return ticks.append("text").attr("x", 8).attr("dy", "0.35em").attr("transform", function(d) {
+        var _ref;
+        return (_ref = d.angle > Math.PI) != null ? _ref : {
+          "rotate(180)translate(-16)": null
+        };
+      }).style("text-anchor", function(d) {
+        var _ref;
+        return (_ref = d.angle > Math.PI) != null ? _ref : {
+          "end": null
+        };
+      }).text(function(d) {
+        return d.label;
+      });
     }
   };
 
@@ -169,7 +197,11 @@
     return d3.json("static/data/language_adjacency.json", function(error, data) {
       chord_diagram('repos_all', ".all_polyglots>.vis", data.repos);
       chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself);
-      return chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself);
+      chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself);
+      return chord_diagram('chord_commits_people_noself', ".by_people>.vis", data.people_noself, {
+        symmetric: true,
+        ticks: true
+      });
     }, $('a.chordlang').on('click', function(event) {
       var chord, d3svg, rank, svg;
       event.preventDefault();

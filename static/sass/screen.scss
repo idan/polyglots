@@ -252,6 +252,11 @@ section {
         fill: white;
     }
 
+    .ticks text {
+        fill: $color-silver;
+        font-size: 0.5em;
+    }
+
     .chord {
         @include transition (all 0.1s linear);
         stroke-width: 1;
@@ -263,7 +268,6 @@ section {
                opacity: 0.075;
            }
     }
-
 }
 
 @mixin language_link($color) {

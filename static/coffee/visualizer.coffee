@@ -47,12 +47,13 @@ chord_defaults = {
     height: 500,
     labels: true,
     symmetric: false, # symmetric colors chords by source on hover,
-    lang: null # pin the chart to a specific language
+    lang: null, # pin the chart to a specific language
+    ticks: false # whether or not to draw tickmarks
 }
 
 chord_diagram = (prefix, el, data, opts) ->
     opts = _.defaults(opts or {}, chord_defaults)
-    outerRadius = Math.min(opts.width, opts.height) / 2 - 10
+    outerRadius = Math.min(opts.width, opts.height) / 2 - 25
     innerRadius = outerRadius - 24
 
     formatPercent = d3.format(".1%")
@@ -72,6 +73,7 @@ chord_diagram = (prefix, el, data, opts) ->
     svg = d3.select(el).append("svg")
         .attr("width", opts.width)
         .attr("height", opts.height)
+        .classed("chord_diagram", true)
       .append("g")
         .attr("id", "circle")
         .attr("data-prefix", prefix)
@@ -84,13 +86,11 @@ chord_diagram = (prefix, el, data, opts) ->
     layout.matrix(data)
 
     mouseover = (d, i) ->
-        console.log('mouseover')
         chord.classed("fade", (p) ->
             return p.source.index != i && p.target.index != i
         )
 
     mouseout = (d, i) ->
-        console.log('mouseout')
         chord.classed("fade", false)
         svg.classed("lockfade", false)
 
@@ -152,13 +152,53 @@ chord_diagram = (prefix, el, data, opts) ->
         group.on('mouseout', mouseout)
 
 
+    if opts.ticks
+        # Returns an array of tick angles and labels, given a group.
+        groupTicks = (d) ->
+            k = (d.endAngle - d.startAngle) / d.value;
+            return d3.range(0, d.value, 500).map((v, i) ->
+
+                return {
+                    angle: v * k + d.startAngle,
+                    label: if i % 2 then null else "#{v/1000.0}k"
+                }
+            )
+
+        ticks = svg.append("g")
+            .classed('ticks', true)
+            .selectAll("g")
+            .data(layout.groups)
+            .enter().append("g").selectAll("g")
+            .data(groupTicks)
+            .enter().append("g")
+            .attr("transform", (d) ->
+                return "rotate(#{(d.angle * 180 / Math.PI - 90)}) translate(#{outerRadius},0)"
+            )
+
+        ticks.append("line")
+            .attr("x1", 1)
+            .attr("y1", 0)
+            .attr("x2", 5)
+            .attr("y2", 0)
+            .style("stroke", "#000")
+
+        ticks.append("text")
+            .attr("x", 8)
+            .attr("dy", "0.35em")
+            .attr("transform", (d) -> return d.angle > Math.PI ? "rotate(180)translate(-16)" : null)
+            .style("text-anchor", (d) -> return d.angle > Math.PI ? "end" : null)
+            .text((d) -> return d.label)
+
+
 $ ->
     d3.json("static/data/language_adjacency.json", (error, data) ->
         chord_diagram('repos_all', ".all_polyglots>.vis", data.repos)
         chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself)
         chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself)
+        chord_diagram('chord_commits_people_noself', ".by_people>.vis", data.people_noself, {symmetric: true, ticks: true})
 
 
+    # focus a chord chart on a specific language
     $('a.chordlang').on('click', (event) ->
         event.preventDefault()
         rank = get_language_rank($(this).attr('data-lang'))
@@ -170,6 +210,9 @@ $ ->
             return p.source.index != rank && p.target.index != rank
         )
     )
+
+
+
         # chord_diagram('chord_cpp_small', ".chord_cpp>.vis", data.repos, {width: 300, height: 300, labels: false, lang: 'Shell'})
         # chord_diagram('chord_ruby_small', ".chord_ruby>.vis", data.repos, {width: 300, height: 300, labels: false, lang: 'Ruby'})
         # chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits)
