@@ -469,7 +469,7 @@ section {
   border-left-color: #ecf0f1;
   padding: 0 0 2em; }
   section header {
-    background-color: #7f8c8d;
+    background-color: #ecf0f1;
     padding: 4em 2em 3em 3em;
     margin-bottom: 2em; }
     section header h1 {
@@ -542,6 +542,23 @@ section {
 
 #polyglot_tendencies {
   border-left-color: #7f8c8d; }
+  #polyglot_tendencies header {
+    background-color: #7f8c8d; }
+
+#language_comparisons {
+  border-left-color: #c0392b; }
+  #language_comparisons header {
+    background-color: #c0392b; }
+
+#native_naturalized {
+  border-left-color: #1abc9c; }
+  #native_naturalized header {
+    background-color: #1abc9c; }
+
+#github_effect {
+  border-left-color: #3498db; }
+  #github_effect header {
+    background-color: #3498db; }
 
 #circle circle {
   fill: none;

@@ -151,7 +151,7 @@ section {
     border-left-color: $color-clouds;
     padding: 0 0 2em;
     header {
-        background-color: $color-asbestos;
+        background-color: $color-clouds;
         padding: 4em 2em 3em 3em;
         margin-bottom: 2em;
         h1 {
@@ -238,11 +238,27 @@ section {
     }
 }
 
-#polyglot_tendencies {
-    border-left-color: $color-asbestos;
+
+@mixin section_colors($color) {
+    border-left-color: $color;
+    header { background-color: $color; }
 }
 
+#polyglot_tendencies {
+    @include section_colors($color-asbestos);
+}
 
+#language_comparisons {
+    @include section_colors($color-pomegranate);
+}
+
+#native_naturalized {
+    @include section_colors($color-turquoise);
+}
+
+#github_effect {
+    @include section_colors($color-peter-river);
+}
 
 #circle {
     circle {
