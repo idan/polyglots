@@ -56,13 +56,16 @@ def index_user(oid):
 @celery.task(rate_limit='12500/h', default_retry_delay=5*60)
 def get_contributors(user, repo):
     url = github_contributors_url.format(user=user, repo=repo)
+    delay_seconds = 2**get_contributors.request.retries
     try:
         r = requests.get(url,
                          params=github_auth_payload)
     except RequestException as exc:
-        delay_seconds = 2**get_contributors.request.retries
         raise get_contributors.retry(exc=exc,
                                      countdown=delay_seconds)
+
+    if not r.ok:
+        raise get_contributors.retry(countdown=delay_seconds)
 
     raw = r.json()
     contributors = {}
