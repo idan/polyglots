@@ -669,3 +669,22 @@ a.chordlang {
     transition: background-color 0.1s linear; }
     a.chordlang[data-lang="Objective-C"]:hover {
       background-color: #eb9950; }
+
+.all_languages .vis {
+  *zoom: 1; }
+  .all_languages .vis:before, .all_languages .vis:after {
+    content: " ";
+    display: table; }
+  .all_languages .vis:after {
+    clear: both; }
+  .all_languages .vis .d3langchart {
+    float: left;
+    margin-right: 10px; }
+    .all_languages .vis .d3langchart:last-child {
+      margin-right: 0; }
+    .all_languages .vis .d3langchart .name {
+      text-align: center;
+      font-style: italic;
+      color: #7f8c8d;
+      border-top: 1px solid #bdc3c7;
+      font-size: 0.85em; }

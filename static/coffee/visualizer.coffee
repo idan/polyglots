@@ -1,3 +1,9 @@
+root = exports ? this
+
+# Interpolating to zero can have bad side-effects:
+# https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_interpolateNumber
+zeroish = 1e-6
+
 colors = {
     turquoise: "#1abc9c",
     green_sea: "#16a085",
@@ -18,7 +24,7 @@ colors = {
     clouds: "#ecf0f1",
     silver: "#bdc3c7",
     concrete: "#95a5a6",
-    asbestos: "#7f8c8d",
+    asbestos: "#7f8c8d"
 }
 
 
@@ -36,7 +42,7 @@ languages = [
     {"name": "C", "rank": 6, "contributors": 6937, "contributions": 18460, "color": colors.sunflower},
     {"name": "C++", "rank": 7, "contributors": 4346, "contributions": 5011, "color": colors.orange},
     {"name": "Perl", "rank": 8, "contributors": 2144, "contributions": 3224, "color": colors.pomegranate},
-    {"name": "Obj-C", "rank": 9, "contributors": 2037, "contributions": 2830, "color": colors.carrot}]
+    {"name": "Objective-C", "short_name": "Obj-C", "rank": 9, "contributors": 2037, "contributions": 2830, "color": colors.carrot}]
 
 get_language_rank = (language) ->
     return _.find(languages, (l) -> return l.name == language).rank
@@ -94,7 +100,7 @@ chord_diagram = (prefix, el, data, opts) ->
         chord.classed("fade", false)
         svg.classed("lockfade", false)
 
-    # Add a group per neighborhood.
+    # Add a group per language.
     group = svg.selectAll(".group")
         .data(layout.groups)
       .enter().append("g")
@@ -118,7 +124,13 @@ chord_diagram = (prefix, el, data, opts) ->
 
         groupText.append("textPath")
             .attr("xlink:href", (d, i) -> return "##{prefix}_group#{i}")
-            .text((d, i) -> return languages[i].name );
+            .text((d, i) ->
+                if 'short_name' of languages[i]
+                    return languages[i].short_name
+                else
+                    return languages[i].name
+            )
+
 
         # Remove the labels that don't fit
         groupText.filter((d, i) ->
@@ -189,6 +201,227 @@ chord_diagram = (prefix, el, data, opts) ->
             .style("text-anchor", (d) -> return d.angle > Math.PI ? "end" : null)
             .text((d) -> return d.label)
 
+class D3MultiLanguageChart
+    constructor: (@el, @data, @opts) ->
+        defaults = {
+            width: 1170,
+            height: 400,
+            paddingY: 20,
+            gutterwidth: 10, # width between charts
+        }
+        @opts = _.defaults(opts or {}, defaults)
+        @chartwidth = (@opts.width - ((languages.length - 1) * @opts.gutterwidth)) / languages.length
+        @chartheight = @opts.height - (2 * @opts.paddingY)
+        @svg = d3.select(@el).append("svg")
+                .attr("width", @opts.width)
+                .attr("height", @opts.height)
+                .append('g')
+                .attr("transform", "translate(0,#{@opts.paddingY})")
+        @y = d3.scale.linear()
+                .range([@opts.height-@opts.paddingY, @opts.paddingY])
+        @x = d3.scale.linear()
+                .domain([0,199])
+                .range([0,@chartwidth])
+
+        @grouped = _.groupBy(@data, 'language')
+        @dataByLang = d3.nest()
+                        .key((d) -> return d.language)
+                        .map(@data)
+        @hoverIndex = null
+        @render()
+
+    render: (key='contributor_count') ->
+        console.log('render!')
+        values = _.map(_.without(_.pluck(@data, key), ''), parseInt)
+        @y.domain(d3.extent(values))
+
+        # join
+        # update
+        # enter
+        # enter+update
+        # exit
+
+        for lang in languages
+            @renderlangchart(lang)
+
+    renderlangchart: (lang) ->
+        console.log("Render Lang Chart: #{lang.name}")
+        data = @dataByLang[lang.name]
+        area = d3.svg.area()
+                .x((d) => return(@x(d.rank)))
+                .y0(@chartheight)
+                .y((d) => return(@y(d[key])))
+
+        # join
+        chart = @svg.append('g')
+                    # .attr('data-lang', lang.name)
+                    # .classed('langchart', true)
+                    .attr('transform', () =>
+                        offset = (lang.rank * @chartwidth) + (lang.rank * @opts.gutterwidth)
+                        "translate(#{offset}, 0)")
+
+
+        chart.append('path')
+            .data(data, (d, i) ->
+                console.log(d)
+                console.log(i)
+                return d['_id'])
+            .attr('class', 'areachart')
+            .attr('d', area)
+
+
+
+        # for lang, repos of @grouped
+        #     langgroup = @svg    
+
+
+        # # Add a group per neighborhood.
+        # langgroups = @chart.selectAll(".langgroup")
+        #     .data(layout.groups)
+        #   .enter().append("g")
+        #     .attr("class", "group")
+
+        # for language in languages
+        #     @svg.
+
+class D3LanguageCharts extends Backbone.View
+    defaults: {
+        key: 'contributor_count',
+        hoverindex: null,
+    }
+
+    initialize: ->
+        @options = _.extend(@defaults, @options)
+        _.bindAll(@)
+        @grouped = _.groupBy(@options.data, 'language')
+        @charts = []
+        @render()
+
+    render: ->
+        @$el.empty()
+        for lang, repos of @grouped
+            console.log("Creating new chart with #{lang}!")
+            chart = new D3LanguageChart({
+                language: lang, data: repos.slice(),
+                fieldmap: @options.fieldmap,
+                id: "langchart_#{lang}",
+                key: @options.key})
+            chart.listenTo(@, 'langchart:keychanged', chart.foo)
+            chart.listenTo(@, 'change:hoverindex', chart.foo)
+            @$el.append(chart.el)
+            @charts.push(chart)
+        root.charts = @charts
+        return @
+
+
+    setKey: (key) ->
+        if key?
+            @options.key = key
+            @trigger('langchart:keychanged', @options.key)
+
+
+
+class D3LanguageChart extends Backbone.View
+    className: 'd3langchart'
+
+    defaults: {
+        width: 108,
+        height: 400,
+        paddingY: 20,
+        key: 'contributor_count',
+        hoverindex: null,
+        # gutterwidth: 10, # width between charts
+    }
+
+    initialize: ->
+        @options = _.defaults(@options, @defaults)
+        _.bindAll(@)
+        @chartheight = @options.height - (2 * @options.paddingY)
+        # @svg = d3.selectAll(@$el).append("svg")
+        #         .attr("width", @options.width)
+        #         .attr("height", @options.height)
+        #         .append('g')
+        #         .attr("transform", "translate(0,#{@options.paddingY})")
+        #         .data(@options.data)
+        # @y = d3.scale.linear()
+        #         .domain(d3.extent(_.map(_.without(_.pluck(@options.data, @key), ''),
+        #                                 parseInt)))
+        #         .range([@options.height-@options.paddingY, @options.paddingY])
+        # @x = d3.scale.linear()
+        #         .domain([0,199])
+        #         .range([0,@options.width])
+        @setup()
+        @$el.append("<p class=\"name\">#{@options.language}</p>")
+
+
+    foo: (newkey) ->
+        @options.key = newkey
+        @render()
+
+    setup: ->
+        d3.selectAll(@$el).append("svg")
+            .attr("width", @options.width)
+            .attr("height", @options.height)
+            .append('g')
+            .attr("transform", "translate(0,#{@options.paddingY})")
+        @render()
+        return @
+
+    render: ->
+        console.log("Rendering with #{@options.language} / #{@options.key}")
+        extents = _.findWhere(@options.fieldmap, {'name': @options.key}).extents
+        y = d3.scale.linear()
+                .domain(extents)
+                .range([@options.height-@options.paddingY, @options.paddingY])
+        x = d3.scale.linear()
+                .domain([0,199])
+                .range([0,@options.width])
+
+        # join
+        console.log(@$el)
+        svg = d3.select(@$el[0]).select('svg>g')
+
+        chart = svg.selectAll('.point')
+            .data(@options.data)
+
+        # update
+        # enter
+        chart.enter().append('circle')
+
+        # enter+update
+        chart.attr('class', 'point')
+            .attr('r', 2)
+            .attr('cx', (d,i) -> x(d.rank))
+            .attr('cy', (d,i) => y(d[@options.key]))
+            .on('mouseover', (d,i) =>
+                console.log("#{d.language} #{d.rank} #{d.user}/#{d.name} #{d[@options.key]}")
+                )
+
+
+        # exit
+
+
+        # line = d3.svg.line()
+        #         .x((d,i) =>
+        #             return @x(d.rank))
+        #         .y((d) => return(
+        #             console.log("#{d[@key]}: #{@y(d[@key])}")
+        #             @y(d[@key])))
+
+        # area = d3.svg.area()
+        #         .x((d) => return(@x(d.rank)))
+        #         .y0(@chartheight)
+        #         .y((d) => return(@y(d[@key])))
+        # chart = @svg.append('path')
+        #     # .datum(@options.data)
+        #     .attr('class', 'area')
+        #     .attr('d', line(@options.data))
+        return @
+
+
+
+
+
 
 $ ->
     d3.json("static/data/language_adjacency.json", (error, data) ->
@@ -196,6 +429,35 @@ $ ->
         chord_diagram('repos_noself', ".no_self_links>.vis", data.repos_noself)
         chord_diagram('commits_noself', ".by_commits>.vis", data.commits_noself)
         chord_diagram('chord_commits_people_noself', ".by_people>.vis", data.people_noself, {symmetric: true, ticks: true})
+    )
+    d3.csv("static/data/repos.csv", (error, repos) ->
+        d3.json("static/data/repofields.json", (error, fieldmap) ->
+            intfields = _.where(fieldmap, {'type': 'int'})
+            datefields = _.where(fieldmap, {'type': 'datetime'})
+            _.each(repos, (r) ->
+                # integerize ints
+                for prop in _.pluck(intfields, 'name')
+                    if prop of r
+                        r[prop] = parseInt(r[prop]) or 0
+                    else
+                        r[prop] = 0
+
+                # dateize dates
+                for prop in _.pluck(datefields, 'name')
+                    if prop of r
+                        r[prop] = Date(r[prop]) or Date(0)
+                    else
+                        r[prop] = Date(0)
+            )
+
+            root.langcharts = new D3LanguageCharts({
+                data: repos,
+                fieldmap: fieldmap,
+                el: $(".all_languages>.vis")})
+            root.repos = repos
+            root.fieldmap = fieldmap
+        )
+
     )
 
     # focus a chord chart on a specific language
@@ -210,4 +472,3 @@ $ ->
             return p.source.index != rank && p.target.index != rank
         )
     )
-        # chord_diagram('chord_commits', "#polyglot_tendencies>.vis", data.commits)

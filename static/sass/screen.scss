@@ -303,3 +303,24 @@ a.chordlang {
     &[data-lang="Perl"] { @include language_link($color-pomegranate); }
     &[data-lang="Objective-C"] { @include language_link($color-carrot); }
 }
+
+
+.all_languages {
+    .vis {
+        @include clearfix;
+        .d3langchart {
+            float: left;
+            margin-right: 10px;
+            &:last-child {
+                margin-right: 0;
+            }
+            .name {
+                text-align: center;
+                font-style: italic;
+                color: $color-asbestos;
+                border-top: 1px solid $color-silver;
+                font-size: 0.85em;
+            }
+        }
+    }
+}
