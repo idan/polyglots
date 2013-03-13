@@ -300,7 +300,6 @@ class D3LanguageCharts extends Backbone.View
     render: ->
         @$el.empty()
         for lang, repos of @grouped
-            console.log("Creating new chart with #{lang}!")
             chart = new D3LanguageChart({
                 language: lang, data: repos.slice(),
                 fieldmap: @options.fieldmap,
@@ -366,24 +365,24 @@ class D3LanguageChart extends Backbone.View
         # join
         svg = d3.select(@$el[0]).select('svg>g')
 
-        # points = svg.selectAll('.point')
-        #     .data(@options.data)
+        points = svg.selectAll('.point')
+            .data(@options.data)
 
-        # # update
-        # # enter
-        # points.enter().append('circle')
-        #     .on('mouseover', (d,i) =>
-        #         console.log("#{d.language} #{d.rank} #{d.user}/#{d.name} #{d[@options.key]}")
-        #         )
+        # update
+        # enter
+        points.enter().append('circle')
+            .on('mouseover', (d,i) =>
+                console.log("#{d.language} #{d.rank} #{d.user}/#{d.name} #{d[@options.key]}")
+                )
 
-        # # enter+update
-        # points.attr('class', 'point')
-        #     .transition()
-        #     .attr('r', 2)
-        #     .attr('cx', (d,i) -> x(d.rank))
-        #     .attr('cy', (d,i) => y(d[@options.key]))
+        # enter+update
+        points.attr('class', 'point')
+            .transition()
+            .attr('r', 2)
+            .attr('cx', (d,i) -> x(d.rank))
+            .attr('cy', (d,i) => y(d[@options.key]))
 
-        # # exit
+        # exit
 
 
         line = d3.svg.line()
@@ -394,10 +393,10 @@ class D3LanguageChart extends Backbone.View
         #         .x((d) => return(@x(d.rank)))
         #         .y0(@chartheight)
         #         .y((d) => return(@y(d[@key])))
-        topline = svg.append('path')
-            .datum(@options.data)
-            .attr('class', 'topline')
-            .attr('d', line)
+        # topline = svg.append('path')
+        #     .datum(@options.data)
+        #     .attr('class', 'topline')
+        #     .attr('d', line)
         return @
 
 

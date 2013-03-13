@@ -300,7 +300,6 @@
       _ref = this.grouped;
       for (lang in _ref) {
         repos = _ref[lang];
-        console.log("Creating new chart with " + lang + "!");
         chart = new D3LanguageChart({
           language: lang,
           data: repos.slice(),
@@ -366,7 +365,7 @@
     };
 
     D3LanguageChart.prototype.render = function() {
-      var extents, line, svg, topline, x, y,
+      var extents, line, points, svg, x, y,
         _this = this;
       extents = _.findWhere(this.options.fieldmap, {
         'name': this.options.key
@@ -374,12 +373,20 @@
       y = d3.scale.linear().domain(extents).range([this.options.height - this.options.paddingY, this.options.paddingY]);
       x = d3.scale.linear().domain([0, 199]).range([0, this.options.width]);
       svg = d3.select(this.$el[0]).select('svg>g');
+      points = svg.selectAll('.point').data(this.options.data);
+      points.enter().append('circle').on('mouseover', function(d, i) {
+        return console.log("" + d.language + " " + d.rank + " " + d.user + "/" + d.name + " " + d[_this.options.key]);
+      });
+      points.attr('class', 'point').transition().attr('r', 2).attr('cx', function(d, i) {
+        return x(d.rank);
+      }).attr('cy', function(d, i) {
+        return y(d[_this.options.key]);
+      });
       line = d3.svg.line().x(function(d, i) {
         return x(d.rank);
       }).y(function(d) {
         return y(d[_this.options.key]);
       });
-      topline = svg.append('path').datum(this.options.data).attr('class', 'topline').attr('d', line);
       return this;
     };
 
