@@ -129,22 +129,22 @@ def dump_repo_data():
             if df in repo:
                 repo[df] = repo[df].isoformat() + 'Z'
 
-    fieldmap = OrderedDict()
+    fieldmap = []
     for f in meta_fields:
-        fieldmap[f] = {'type': 'string'}
+        fieldmap.append({'name': f, 'type': 'string'})
     for f in numeric_fields:
         # compute extents
         arr = sorted([r[f] for r in repos if f in r])
         extent = [arr[0], arr[-1]]
-        fieldmap[f] = {'type': 'int', 'extents': extent}
+        fieldmap.append({'name': f, 'type': 'int', 'extents': extent})
     for f in datetime_fields:
         # compute extents
         arr = sorted([r[f] for r in repos if f in r])
         extent = [arr[0], arr[-1]]
-        fieldmap[f] = {'type': 'datetime', 'extents': extent}
+        fieldmap.append({'name': f, 'type': 'datetime', 'extents': extent})
 
     with open('repos.csv', 'wb') as fp:
-        writer = csv.DictWriter(fp, fieldmap.keys())
+        writer = csv.DictWriter(fp, [f['name'] for f in fieldmap])
         writer.writeheader()
         for r in sorted(repos, key=repokey):
             writer.writerow(r)

@@ -1,91 +1,106 @@
-{
-  "_id": {
-    "type": "string"
+[
+  {
+    "type": "string", 
+    "name": "_id"
   }, 
-  "name": {
-    "type": "string"
+  {
+    "type": "string", 
+    "name": "name"
   }, 
-  "user": {
-    "type": "string"
+  {
+    "type": "string", 
+    "name": "user"
   }, 
-  "language": {
-    "type": "string"
+  {
+    "type": "string", 
+    "name": "language"
   }, 
-  "rank": {
+  {
     "extents": [
       0, 
       199
     ], 
-    "type": "int"
+    "type": "int", 
+    "name": "rank"
   }, 
-  "contributor_count": {
+  {
     "extents": [
       0, 
       2577
     ], 
-    "type": "int"
+    "type": "int", 
+    "name": "contributor_count"
   }, 
-  "authors_count": {
+  {
     "extents": [
       1, 
       13314
     ], 
-    "type": "int"
+    "type": "int", 
+    "name": "authors_count"
   }, 
-  "forks_count": {
+  {
     "extents": [
       0, 
       12921
     ], 
-    "type": "int"
+    "type": "int", 
+    "name": "forks_count"
   }, 
-  "size": {
+  {
     "extents": [
       0, 
       2214908
     ], 
-    "type": "int"
+    "type": "int", 
+    "name": "size"
   }, 
-  "num_commits": {
+  {
     "extents": [
       1, 
       349693
     ], 
-    "type": "int"
+    "type": "int", 
+    "name": "num_commits"
   }, 
-  "watchers_count": {
+  {
     "extents": [
       0, 
       45538
     ], 
-    "type": "int"
+    "type": "int", 
+    "name": "watchers_count"
   }, 
-  "disk_bytes": {
+  {
     "extents": [
       58985, 
       8198953106
     ], 
-    "type": "int"
+    "type": "int", 
+    "name": "disk_bytes"
   }, 
-  "latest_commit": {
+  {
     "extents": [
       "2009-01-13T05:54:22Z", 
       "2013-02-12T06:24:33Z"
     ], 
-    "type": "datetime"
+    "type": "datetime", 
+    "name": "latest_commit"
   }, 
-  "oldest_commit": {
+  {
     "extents": [
       "1970-01-01T00:00:00Z", 
       "2013-02-05T19:16:51Z"
     ], 
-    "type": "datetime"
+    "type": "datetime", 
+    "name": "oldest_commit"
   }, 
-  "created_at": {
+  {
     "extents": [
       "2007-10-29T14:37:16Z", 
       "2013-03-07T19:29:33Z"
     ], 
-    "type": "datetime"
+    "type": "datetime", 
+    "name": "created_at"
   }
-}
+]
