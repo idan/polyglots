@@ -366,25 +366,20 @@
     };
 
     D3LanguageChart.prototype.render = function() {
-      var chart, extents, svg, x, y,
+      var extents, line, svg, topline, x, y,
         _this = this;
-      console.log("Rendering with " + this.options.language + " / " + this.options.key);
       extents = _.findWhere(this.options.fieldmap, {
         'name': this.options.key
       }).extents;
       y = d3.scale.linear().domain(extents).range([this.options.height - this.options.paddingY, this.options.paddingY]);
       x = d3.scale.linear().domain([0, 199]).range([0, this.options.width]);
-      console.log(this.$el);
       svg = d3.select(this.$el[0]).select('svg>g');
-      chart = svg.selectAll('.point').data(this.options.data);
-      chart.enter().append('circle');
-      chart.attr('class', 'point').attr('r', 2).attr('cx', function(d, i) {
+      line = d3.svg.line().x(function(d, i) {
         return x(d.rank);
-      }).attr('cy', function(d, i) {
+      }).y(function(d) {
         return y(d[_this.options.key]);
-      }).on('mouseover', function(d, i) {
-        return console.log("" + d.language + " " + d.rank + " " + d.user + "/" + d.name + " " + d[_this.options.key]);
       });
+      topline = svg.append('path').datum(this.options.data).attr('class', 'topline').attr('d', line);
       return this;
     };
 

@@ -337,19 +337,6 @@ class D3LanguageChart extends Backbone.View
         @options = _.defaults(@options, @defaults)
         _.bindAll(@)
         @chartheight = @options.height - (2 * @options.paddingY)
-        # @svg = d3.selectAll(@$el).append("svg")
-        #         .attr("width", @options.width)
-        #         .attr("height", @options.height)
-        #         .append('g')
-        #         .attr("transform", "translate(0,#{@options.paddingY})")
-        #         .data(@options.data)
-        # @y = d3.scale.linear()
-        #         .domain(d3.extent(_.map(_.without(_.pluck(@options.data, @key), ''),
-        #                                 parseInt)))
-        #         .range([@options.height-@options.paddingY, @options.paddingY])
-        # @x = d3.scale.linear()
-        #         .domain([0,199])
-        #         .range([0,@options.width])
         @setup()
         @$el.append("<p class=\"name\">#{@options.language}</p>")
 
@@ -368,7 +355,6 @@ class D3LanguageChart extends Backbone.View
         return @
 
     render: ->
-        console.log("Rendering with #{@options.language} / #{@options.key}")
         extents = _.findWhere(@options.fieldmap, {'name': @options.key}).extents
         y = d3.scale.linear()
                 .domain(extents)
@@ -378,44 +364,40 @@ class D3LanguageChart extends Backbone.View
                 .range([0,@options.width])
 
         # join
-        console.log(@$el)
         svg = d3.select(@$el[0]).select('svg>g')
 
-        chart = svg.selectAll('.point')
-            .data(@options.data)
+        # points = svg.selectAll('.point')
+        #     .data(@options.data)
 
-        # update
-        # enter
-        chart.enter().append('circle')
+        # # update
+        # # enter
+        # points.enter().append('circle')
+        #     .on('mouseover', (d,i) =>
+        #         console.log("#{d.language} #{d.rank} #{d.user}/#{d.name} #{d[@options.key]}")
+        #         )
 
-        # enter+update
-        chart.attr('class', 'point')
-            .attr('r', 2)
-            .attr('cx', (d,i) -> x(d.rank))
-            .attr('cy', (d,i) => y(d[@options.key]))
-            .on('mouseover', (d,i) =>
-                console.log("#{d.language} #{d.rank} #{d.user}/#{d.name} #{d[@options.key]}")
-                )
+        # # enter+update
+        # points.attr('class', 'point')
+        #     .transition()
+        #     .attr('r', 2)
+        #     .attr('cx', (d,i) -> x(d.rank))
+        #     .attr('cy', (d,i) => y(d[@options.key]))
+
+        # # exit
 
 
-        # exit
-
-
-        # line = d3.svg.line()
-        #         .x((d,i) =>
-        #             return @x(d.rank))
-        #         .y((d) => return(
-        #             console.log("#{d[@key]}: #{@y(d[@key])}")
-        #             @y(d[@key])))
+        line = d3.svg.line()
+                .x((d,i) => return x(d.rank))
+                .y((d) => return(y(d[@options.key])))
 
         # area = d3.svg.area()
         #         .x((d) => return(@x(d.rank)))
         #         .y0(@chartheight)
         #         .y((d) => return(@y(d[@key])))
-        # chart = @svg.append('path')
-        #     # .datum(@options.data)
-        #     .attr('class', 'area')
-        #     .attr('d', line(@options.data))
+        topline = svg.append('path')
+            .datum(@options.data)
+            .attr('class', 'topline')
+            .attr('d', line)
         return @
 
 

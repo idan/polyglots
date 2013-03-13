@@ -321,6 +321,11 @@ a.chordlang {
                 border-top: 1px solid $color-silver;
                 font-size: 0.85em;
             }
+            .topline {
+                fill: none;
+                stroke-width: 1;
+                stroke: $color-pomegranate;
+            }
         }
     }
 }

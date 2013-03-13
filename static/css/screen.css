@@ -688,3 +688,7 @@ a.chordlang {
       color: #7f8c8d;
       border-top: 1px solid #bdc3c7;
       font-size: 0.85em; }
+    .all_languages .vis .d3langchart .topline {
+      fill: none;
+      stroke-width: 1;
+      stroke: #c0392b; }
