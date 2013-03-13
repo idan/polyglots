@@ -7,6 +7,7 @@ from collections import Counter
 import pymongo
 from bson import ObjectId
 import requests
+import iso8601
 from requests.exceptions import RequestException
 
 from githubscanner.celery import celery
@@ -30,7 +31,7 @@ github_auth_payload = {
 github_contributors_url = 'https://api.github.com/repos/{user}/{repo}/contributors'
 github_user_url = 'https://api.github.com/users/{user}'
 github_user_repos_url = 'https://api.github.com/users/{user}/repos'
-
+github_repo_url = 'https://api.github.com/repos/{user}/{repo}'
 
 def parse_links(text):
     """Parse the github 'link' header for rel=next/prev/first/last URLs"""
@@ -206,3 +207,25 @@ def ranked_language_contributions():
             'ranked_repos_by_language_commits': contributor_langcommit_freq[login],
         }})
         print('Done!')
+
+
+def get_repo_timestamps(user, repo):
+    sys.stdout.write("Fetching timestamps for {}/{}... ".format(user, repo))
+    url = github_repo_url.format(user=user, repo=repo)
+    try:
+        r = requests.get(url,
+                         params=github_auth_payload)
+    except RequestException:
+        print("************** TOTAL FAIL **************")
+
+    raw = r.json()
+    fields = ['created_at', 'updated_at', 'pushed_at']
+    doc = {}
+    for f in fields:
+        if f not in raw:
+            print ("*** Broken repo. Skipping!")
+            return
+        doc[f] = iso8601.parse_date(raw[f])
+    db.repos.update({'user': user, 'name': repo},
+                    {'$set': doc})
+    print("OK!")
