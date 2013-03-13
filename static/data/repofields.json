@@ -1,0 +1,91 @@
+{
+  "_id": {
+    "type": "string"
+  }, 
+  "name": {
+    "type": "string"
+  }, 
+  "user": {
+    "type": "string"
+  }, 
+  "language": {
+    "type": "string"
+  }, 
+  "rank": {
+    "extents": [
+      0, 
+      199
+    ], 
+    "type": "int"
+  }, 
+  "contributor_count": {
+    "extents": [
+      0, 
+      2577
+    ], 
+    "type": "int"
+  }, 
+  "authors_count": {
+    "extents": [
+      1, 
+      13314
+    ], 
+    "type": "int"
+  }, 
+  "forks_count": {
+    "extents": [
+      0, 
+      12921
+    ], 
+    "type": "int"
+  }, 
+  "size": {
+    "extents": [
+      0, 
+      2214908
+    ], 
+    "type": "int"
+  }, 
+  "num_commits": {
+    "extents": [
+      1, 
+      349693
+    ], 
+    "type": "int"
+  }, 
+  "watchers_count": {
+    "extents": [
+      0, 
+      45538
+    ], 
+    "type": "int"
+  }, 
+  "disk_bytes": {
+    "extents": [
+      58985, 
+      8198953106
+    ], 
+    "type": "int"
+  }, 
+  "latest_commit": {
+    "extents": [
+      "2009-01-13T05:54:22Z", 
+      "2013-02-12T06:24:33Z"
+    ], 
+    "type": "datetime"
+  }, 
+  "oldest_commit": {
+    "extents": [
+      "1970-01-01T00:00:00Z", 
+      "2013-02-05T19:16:51Z"
+    ], 
+    "type": "datetime"
+  }, 
+  "created_at": {
+    "extents": [
+      "2007-10-29T14:37:16Z", 
+      "2013-03-07T19:29:33Z"
+    ], 
+    "type": "datetime"
+  }
+}

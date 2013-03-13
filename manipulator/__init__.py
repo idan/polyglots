@@ -1,8 +1,9 @@
 import os
 import sys
 import copy
-from collections import Counter, OrderedDict
+from collections import OrderedDict
 import csv
+import json
 import pymongo
 
 # Setup mongodb
@@ -118,21 +119,38 @@ def remove_identity(matrix):
 
 
 def dump_repo_data():
-    repos = list(db.repos.find(fields=['name', 'user', 'rank', 'contributor_count', 'authors_count', 'forks_count', 'size', 'num_commits', 'latest_commit', 'watchers_count', 'language', 'oldest_commit', 'disk_bytes']))
+    meta_fields = ['_id', 'name', 'user', 'language']
+    numeric_fields = ['rank', 'contributor_count', 'authors_count', 'forks_count', 'size', 'num_commits', 'watchers_count', 'disk_bytes']
+    datetime_fields = ['latest_commit', 'oldest_commit', 'created_at']
+    repos = list(db.repos.find(fields=meta_fields + numeric_fields + datetime_fields))
     for repo in repos:
-        if 'latest_commit' in repo:
-            repo['latest_commit'] = repo['latest_commit'].isoformat()
-        if 'oldest_commit' in repo:
-            repo['oldest_commit'] = repo['oldest_commit'].isoformat()
         repo['_id'] = str(repo['_id'])
+        for df in datetime_fields:
+            if df in repo:
+                repo[df] = repo[df].isoformat() + 'Z'
 
-    fields = ['_id', 'language', 'rank', 'user', 'name', 'authors_count', 'contributor_count', 'disk_bytes', 'forks_count', 'latest_commit',  'num_commits', 'oldest_commit',  'size',  'watchers_count']
+    fieldmap = OrderedDict()
+    for f in meta_fields:
+        fieldmap[f] = {'type': 'string'}
+    for f in numeric_fields:
+        # compute extents
+        arr = sorted([r[f] for r in repos if f in r])
+        extent = [arr[0], arr[-1]]
+        fieldmap[f] = {'type': 'int', 'extents': extent}
+    for f in datetime_fields:
+        # compute extents
+        arr = sorted([r[f] for r in repos if f in r])
+        extent = [arr[0], arr[-1]]
+        fieldmap[f] = {'type': 'datetime', 'extents': extent}
 
     with open('repos.csv', 'wb') as fp:
-        writer = csv.DictWriter(fp, fields)
+        writer = csv.DictWriter(fp, fieldmap.keys())
         writer.writeheader()
         for r in sorted(repos, key=repokey):
             writer.writerow(r)
+
+    with open('repofields.json', 'w') as fp:
+        json.dump(fieldmap, fp, indent=2)
 
 
 def repokey(r):
