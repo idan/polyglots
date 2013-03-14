@@ -289,6 +289,8 @@
       width: 210,
       height: 250,
       paddingY: 5,
+      paddingTop: 5,
+      paddingBottom: 20,
       paddingX: 5,
       key: 'contributor_count',
       yScale: 'linear',
@@ -299,7 +301,7 @@
     D3LanguageChart.prototype.initialize = function() {
       this.options = _.defaults(this.options, this.defaults);
       _.bindAll(this);
-      this.chartheight = this.options.height - this.options.paddingY - 1;
+      this.chartheight = this.options.height - this.options.paddingTop - this.options.paddingBottom - 1;
       this.chartwidth = this.options.width - (2 * this.options.paddingX);
       this.setup();
       return this.$el.append("<p class=\"name\">" + this.options.language + "</p>");
@@ -378,7 +380,7 @@
         marker = g.selectAll('.hoverindex');
         if (marker[0].length === 0) {
           marker = g.append('circle').attr('class', 'hoverindex');
-          marker.attr('r', 3).transition().duration(100).attr('r', 5);
+          marker.attr('r', 4);
         }
         return marker.attr('cx', scales.x(this.options.hoverindex)).attr('cy', scales.y(val));
       } else {
@@ -393,23 +395,23 @@
       svg = d3.select(this.$el[0]);
       g = svg.select('svg>g');
       mousemove = function() {
+        return set_hoverindex(d3.mouse(this)[0]);
+      };
+      mouseout = function() {
+        return set_hoverindex(null);
+      };
+      set_hoverindex = function(xcoord) {
         var val;
-        val = d3.mouse(this)[0];
+        val = xcoord - _this.options.paddingX;
         if (val > 199) {
           val = 199;
         }
         if (val < 0) {
           val = 0;
         }
-        return set_hoverindex(val);
+        return _this.options.chartgroup.sethoverindex(val);
       };
-      mouseout = function() {
-        return set_hoverindex(null);
-      };
-      set_hoverindex = function(index) {
-        return _this.options.chartgroup.sethoverindex(index);
-      };
-      g.on('mousemove', mousemove, true);
+      svg.on('mousemove', mousemove, true);
       this.$el.on('mouseleave', mouseout);
       bars = g.selectAll('.bar').data(this.options.data);
       bars.enter().append('rect').attr('data-lang', this.options.language).attr('class', 'bar').attr('x', function(d) {

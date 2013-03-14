@@ -263,6 +263,8 @@ class D3LanguageChart extends Backbone.View
         width: 210,
         height: 250,
         paddingY: 5,
+        paddingTop: 5,
+        paddingBottom: 20,
         paddingX: 5,
         key: 'contributor_count',
         yScale: 'linear'
@@ -274,7 +276,9 @@ class D3LanguageChart extends Backbone.View
     initialize: ->
         @options = _.defaults(@options, @defaults)
         _.bindAll(@)
-        @chartheight = @options.height - @options.paddingY - 1
+        @chartheight = @options.height -
+                       @options.paddingTop - 
+                       @options.paddingBottom - 1
         @chartwidth = @options.width - (2 * @options.paddingX)
         @setup()
         @$el.append("<p class=\"name\">#{@options.language}</p>")
@@ -364,10 +368,10 @@ class D3LanguageChart extends Backbone.View
             if marker[0].length == 0
                 # create the marker
                 marker = g.append('circle').attr('class', 'hoverindex')
-                marker.attr('r', 3)
-                .transition()
-                .duration(100)
-                .attr('r', 5)
+                marker.attr('r', 4)
+                # .transition()
+                # .duration(100)
+                # .attr('r', 5)
 
             marker
                 .attr('cx', scales.x(@options.hoverindex))
@@ -386,21 +390,20 @@ class D3LanguageChart extends Backbone.View
         # event handling
 
         mousemove = () ->
-            val = d3.mouse(this)[0]
-            if val > 199
-                val = 199
-            if val < 0
-                val = 0
-            set_hoverindex(val)
+            set_hoverindex(d3.mouse(this)[0])
 
         mouseout = () ->
             set_hoverindex(null)
 
-        set_hoverindex = (index) =>
-            @options.chartgroup.sethoverindex(index)
-            # render_hoverindex()
+        set_hoverindex = (xcoord) =>
+            val = xcoord - @options.paddingX
+            if val > 199
+                val = 199
+            if val < 0
+                val = 0
+            @options.chartgroup.sethoverindex(val)
 
-        g.on('mousemove', mousemove, true)
+        svg.on('mousemove', mousemove, true)
 
         # mouseout is bad because of bubbling events.
         # TODO: how do we fix so we don't get triggered mouseout when moving

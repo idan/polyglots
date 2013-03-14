@@ -340,7 +340,14 @@ a.chordlang {
                 stroke-width: 1;
                 stroke: $color-pomegranate;
             }
-            .areapath, .bar {
+
+            .hoverindex {
+                fill: black;
+                stroke: white;
+                stroke-width: 1px;
+
+            }
+            .bar {
                 &[data-lang="JavaScript"] { fill: $color-belize-hole; }
                 &[data-lang="Ruby"] { fill: $color-alizarin; }
                 &[data-lang="Java"] { fill: $color-turquoise; }

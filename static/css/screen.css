@@ -694,25 +694,29 @@ a.chordlang {
       fill: none;
       stroke-width: 1;
       stroke: #c0392b; }
-    .all_languages .vis .d3langchart .areapath[data-lang="JavaScript"], .all_languages .vis .d3langchart .bar[data-lang="JavaScript"] {
+    .all_languages .vis .d3langchart .hoverindex {
+      fill: black;
+      stroke: white;
+      stroke-width: 1px; }
+    .all_languages .vis .d3langchart .bar[data-lang="JavaScript"] {
       fill: #2980b9; }
-    .all_languages .vis .d3langchart .areapath[data-lang="Ruby"], .all_languages .vis .d3langchart .bar[data-lang="Ruby"] {
+    .all_languages .vis .d3langchart .bar[data-lang="Ruby"] {
       fill: #e74c3c; }
-    .all_languages .vis .d3langchart .areapath[data-lang="Java"], .all_languages .vis .d3langchart .bar[data-lang="Java"] {
+    .all_languages .vis .d3langchart .bar[data-lang="Java"] {
       fill: #1abc9c; }
-    .all_languages .vis .d3langchart .areapath[data-lang="Python"], .all_languages .vis .d3langchart .bar[data-lang="Python"] {
+    .all_languages .vis .d3langchart .bar[data-lang="Python"] {
       fill: #27ae60; }
-    .all_languages .vis .d3langchart .areapath[data-lang="Shell"], .all_languages .vis .d3langchart .bar[data-lang="Shell"] {
+    .all_languages .vis .d3langchart .bar[data-lang="Shell"] {
       fill: #8e44ad; }
-    .all_languages .vis .d3langchart .areapath[data-lang="PHP"], .all_languages .vis .d3langchart .bar[data-lang="PHP"] {
+    .all_languages .vis .d3langchart .bar[data-lang="PHP"] {
       fill: #3498db; }
-    .all_languages .vis .d3langchart .areapath[data-lang="C"], .all_languages .vis .d3langchart .bar[data-lang="C"] {
+    .all_languages .vis .d3langchart .bar[data-lang="C"] {
       fill: #f1c40f; }
-    .all_languages .vis .d3langchart .areapath[data-lang="C++"], .all_languages .vis .d3langchart .bar[data-lang="C++"] {
+    .all_languages .vis .d3langchart .bar[data-lang="C++"] {
       fill: #f39c12; }
-    .all_languages .vis .d3langchart .areapath[data-lang="Perl"], .all_languages .vis .d3langchart .bar[data-lang="Perl"] {
+    .all_languages .vis .d3langchart .bar[data-lang="Perl"] {
       fill: #c0392b; }
-    .all_languages .vis .d3langchart .areapath[data-lang="Objective-C"], .all_languages .vis .d3langchart .bar[data-lang="Objective-C"] {
+    .all_languages .vis .d3langchart .bar[data-lang="Objective-C"] {
       fill: #e67e22; }
 
 /* @group Base */
