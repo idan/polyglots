@@ -3,3 +3,4 @@ repos/
 *.pyo
 *.env
 .sass-cache
+dump/
