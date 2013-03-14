@@ -4,6 +4,11 @@ root = exports ? this
 # https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_interpolateNumber
 zeroish = 1e-6
 
+# log(0) == negative infinity, so in some contexts it's helpful to cheat so
+# log scales don't break. This number works when the real inputs are integral
+# (and thus >= 1 if not zero)
+logzero = 0.1
+
 colors = {
     turquoise: "#1abc9c",
     green_sea: "#16a085",
@@ -288,7 +293,7 @@ class D3LanguageChart extends Backbone.View
         svg = d3.select(@$el[0])
         g = svg.select('svg>g')
         ylog = d3.scale.log()
-                .domain([0.1, extents[1]])
+                .domain([logzero, extents[1]])
                 .range([@chartheight, 0])
                 .clamp(true)
         x = d3.scale.linear()
@@ -299,7 +304,7 @@ class D3LanguageChart extends Backbone.View
         if @options.hoverindex?
             val = @options.data[@options.hoverindex][@options.key]
             if val == 0
-                val = 0.1
+                val = logzero
             marker = g.selectAll('.hoverindex')
 
             if marker[0].length == 0
@@ -326,7 +331,7 @@ class D3LanguageChart extends Backbone.View
 
 
         ylog = d3.scale.log()
-                .domain([0.1, extents[1]])
+                .domain([logzero, extents[1]])
                 .range([@chartheight, 0])
                 .clamp(true)
 
@@ -389,12 +394,12 @@ class D3LanguageChart extends Backbone.View
             .attr('y', (d) =>
                 val = d[@options.key]
                 if val == 0
-                    val = 0.1
+                    val = logzero
                 return ylog(val))
             .attr('height', (d) =>
                 val = d[@options.key]
                 if val == 0
-                    val = 0.1
+                    val = logzero
                 return @chartheight - ylog(val))
 
         # add baseline
