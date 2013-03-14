@@ -319,9 +319,10 @@ a.chordlang {
 .all_languages {
     .vis {
         @include clearfix;
+        max-width: 1080px;
         .d3langchart {
             float: left;
-            margin-right: 10px;
+            margin-right: 5px;
             &:last-child {
                 margin-right: 0;
             }
@@ -329,7 +330,7 @@ a.chordlang {
                 text-align: center;
                 font-style: italic;
                 color: $color-asbestos;
-                border-top: 1px solid $color-silver;
+                // border-top: 1px solid $color-silver;
                 font-size: 0.85em;
                 padding-top: 0;
                 margin-top: 0;
@@ -350,10 +351,6 @@ a.chordlang {
                 &[data-lang="C++"] { fill: $color-orange; }
                 &[data-lang="Perl"] { fill: $color-pomegranate; }
                 &[data-lang="Objective-C"] { fill: $color-carrot; }
-                // fill: $color-peter-river;
-                // stroke: $color-belize-hole;
-                // stroke-width: 1;
-
             }
         }
     }

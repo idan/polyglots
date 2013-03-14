@@ -671,7 +671,8 @@ a.chordlang {
       background-color: #eb9950; }
 
 .all_languages .vis {
-  *zoom: 1; }
+  *zoom: 1;
+  max-width: 1080px; }
   .all_languages .vis:before, .all_languages .vis:after {
     content: " ";
     display: table; }
@@ -679,14 +680,13 @@ a.chordlang {
     clear: both; }
   .all_languages .vis .d3langchart {
     float: left;
-    margin-right: 10px; }
+    margin-right: 5px; }
     .all_languages .vis .d3langchart:last-child {
       margin-right: 0; }
     .all_languages .vis .d3langchart .name {
       text-align: center;
       font-style: italic;
       color: #7f8c8d;
-      border-top: 1px solid #bdc3c7;
       font-size: 0.85em;
       padding-top: 0;
       margin-top: 0; }

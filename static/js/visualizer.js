@@ -275,9 +275,10 @@
     D3LanguageChart.prototype.className = 'd3langchart';
 
     D3LanguageChart.prototype.defaults = {
-      width: 200,
+      width: 210,
       height: 250,
-      paddingY: 0,
+      paddingY: 5,
+      paddingX: 5,
       key: 'contributor_count',
       hoverindex: null,
       chartgroup: null
@@ -287,6 +288,7 @@
       this.options = _.defaults(this.options, this.defaults);
       _.bindAll(this);
       this.chartheight = this.options.height - this.options.paddingY - 1;
+      this.chartwidth = this.options.width - (2 * this.options.paddingX);
       this.setup();
       return this.$el.append("<p class=\"name\">" + this.options.language + "</p>");
     };
@@ -302,7 +304,7 @@
     };
 
     D3LanguageChart.prototype.setup = function() {
-      d3.selectAll(this.$el).append("svg").attr("width", this.options.width).attr("height", this.options.height).append('g').attr("transform", "translate(0," + this.options.paddingY + ")");
+      d3.selectAll(this.$el).append("svg").attr("width", this.options.width).attr("height", this.options.height).append('g').attr("transform", "translate(" + this.options.paddingX + "," + this.options.paddingY + ")");
       this.render();
       return this;
     };
@@ -315,7 +317,8 @@
       svg = d3.select(this.$el[0]);
       g = svg.select('svg>g');
       ylog = d3.scale.log().domain([0.1, extents[1]]).range([this.chartheight, 0]).clamp(true);
-      x = d3.scale.linear().domain([0, 199]).range([0, this.options.width]);
+      x = d3.scale.linear().domain([0, 199]).range([0, this.chartwidth]);
+      console.log("Render Hover Index: " + this.options.language + " / " + this.options.hoverindex);
       if (this.options.hoverindex != null) {
         val = this.options.data[this.options.hoverindex][this.options.key];
         if (val === 0) {
@@ -324,50 +327,63 @@
         marker = g.selectAll('.hoverindex');
         if (marker[0].length === 0) {
           marker = g.append('circle').attr('class', 'hoverindex');
+          marker.attr('r', 3).transition().duration(100).attr('r', 5);
         }
-        return marker.attr('cx', x(this.options.hoverindex)).attr('cy', ylog(val)).attr('r', 3).transition().duration(100).attr('r', 5);
+        return marker.attr('cx', x(this.options.hoverindex)).attr('cy', ylog(val));
       } else {
         return g.selectAll('.hoverindex').remove();
       }
     };
 
     D3LanguageChart.prototype.render = function() {
-      var area, bars, baseline, extents, g, logarea, logline, mousemove, mouseout, set_hoverindex, svg, x, xbands, y, ylog,
+      var bars, extents, g, mousemove, mouseout, set_hoverindex, svg, x, xbands, y, ylog,
         _this = this;
       extents = _.findWhere(this.options.fieldmap, {
         'name': this.options.key
       }).extents;
       y = d3.scale.linear().domain(extents).range([this.chartheight, 0]);
       ylog = d3.scale.log().domain([0.1, extents[1]]).range([this.chartheight, 0]).clamp(true);
-      x = d3.scale.linear().domain([0, 199]).range([0, this.options.width]);
-      xbands = d3.scale.ordinal().domain(d3.range(200)).rangeRoundBands([0, this.options.width], 0);
+      x = d3.scale.linear().domain([0, 199]).range([0, this.chartwidth]);
+      xbands = d3.scale.ordinal().domain(d3.range(200)).rangeRoundBands([0, this.chartwidth], 0);
       svg = d3.select(this.$el[0]);
       g = svg.select('svg>g');
       mousemove = function() {
-        return set_hoverindex(d3.mouse(this)[0]);
+        var val;
+        val = d3.mouse(this)[0];
+        if (val > 199) {
+          val = 199;
+        }
+        if (val < 0) {
+          val = 0;
+        }
+        console.log(val);
+        return set_hoverindex(val);
       };
       mouseout = function() {
+        console.log("mouseout!");
         return set_hoverindex(null);
       };
       set_hoverindex = function(index) {
         return _this.options.chartgroup.sethoverindex(index);
       };
-      svg.on('mousemove', mousemove);
-      svg.on('mouseout', mouseout);
+      g.on('mousemove', mousemove, true);
+      this.$el.on('mouseleave', mouseout);
       bars = g.selectAll('.bar').data(this.options.data);
       bars.enter().append('rect').on('mouseover', function(d, i) {
         return console.log("" + d.language + " " + d.rank + " " + d.user + "/" + d.name + " " + d[_this.options.key]);
       });
-      bars.attr('class', 'bar').attr('data-lang', this.options.language).transition().attr('x', function(d) {
+      bars.attr('class', 'bar').attr('data-lang', this.options.language).attr('x', function(d) {
         return xbands(d.rank);
-      }).attr('y', function(d) {
+      }).attr('width', xbands.rangeBand()).attr('y', this.chartheight).attr({
+        'height': 0
+      }).transition().attr('y', function(d) {
         var val;
         val = d[_this.options.key];
         if (val === 0) {
           val = 0.1;
         }
         return ylog(val);
-      }).attr('width', xbands.rangeBand()).attr('height', function(d) {
+      }).attr('height', function(d) {
         var val;
         val = d[_this.options.key];
         if (val === 0) {
@@ -375,32 +391,7 @@
         }
         return _this.chartheight - ylog(val);
       });
-      baseline = g.append('rect').attr('class', 'baseline').attr('x', 0).attr('y', this.chartheight - 1).attr('width', this.options.width).attr('height', 1);
-      logline = d3.svg.line().x(function(d, i) {
-        return x(d.rank);
-      }).y(function(d) {
-        var val;
-        val = d[_this.options.key];
-        if (val === 0) {
-          val = zeroish;
-        }
-        return ylog(val);
-      });
-      logarea = d3.svg.area().x(function(d) {
-        return x(d.rank);
-      }).y0(this.chartheight).y1(function(d) {
-        var val;
-        val = d[_this.options.key];
-        if (val === 0) {
-          val = zeroish;
-        }
-        return ylog(val);
-      });
-      area = d3.svg.area().x(function(d) {
-        return x(d.rank);
-      }).y0(this.chartheight).y1(function(d) {
-        return y(d[_this.options.key]);
-      });
+      g.append('rect').attr('class', 'baseline').attr('x', 0).attr('y', this.chartheight - 1).attr('width', this.chartwidth).attr('height', 1);
       return this;
     };
 

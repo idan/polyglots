@@ -247,9 +247,10 @@ class D3LanguageChart extends Backbone.View
     className: 'd3langchart'
 
     defaults: {
-        width: 200,
+        width: 210,
         height: 250,
-        paddingY: 0,
+        paddingY: 5,
+        paddingX: 5,
         key: 'contributor_count',
         hoverindex: null,
         chartgroup: null,
@@ -260,6 +261,7 @@ class D3LanguageChart extends Backbone.View
         @options = _.defaults(@options, @defaults)
         _.bindAll(@)
         @chartheight = @options.height - @options.paddingY - 1
+        @chartwidth = @options.width - (2 * @options.paddingX)
         @setup()
         @$el.append("<p class=\"name\">#{@options.language}</p>")
 
@@ -277,7 +279,7 @@ class D3LanguageChart extends Backbone.View
             .attr("width", @options.width)
             .attr("height", @options.height)
             .append('g')
-            .attr("transform", "translate(0,#{@options.paddingY})")
+            .attr("transform", "translate(#{@options.paddingX},#{@options.paddingY})")
         @render()
         return @
 
@@ -291,21 +293,27 @@ class D3LanguageChart extends Backbone.View
                 .clamp(true)
         x = d3.scale.linear()
                 .domain([0,199])
-                .range([0,@options.width])
+                .range([0,@chartwidth])
+
+        console.log("Render Hover Index: #{@options.language} / #{@options.hoverindex}")
         if @options.hoverindex?
             val = @options.data[@options.hoverindex][@options.key]
             if val == 0
                 val = 0.1
             marker = g.selectAll('.hoverindex')
-            if marker[0].length == 0
-                marker = g.append('circle').attr('class', 'hoverindex')
 
-            marker.attr('cx', x(@options.hoverindex))
-                .attr('cy', ylog(val))
-                .attr('r', 3)
+            if marker[0].length == 0
+                # create the marker
+                marker = g.append('circle').attr('class', 'hoverindex')
+                marker.attr('r', 3)
                 .transition()
                 .duration(100)
                 .attr('r', 5)
+
+            marker
+                .attr('cx', x(@options.hoverindex))
+                .attr('cy', ylog(val))
+
         else
             # leaving the chart, get rid of the dot
             g.selectAll('.hoverindex').remove()
@@ -324,83 +332,42 @@ class D3LanguageChart extends Backbone.View
 
         x = d3.scale.linear()
                 .domain([0,199])
-                .range([0,@options.width])
+                .range([0,@chartwidth])
 
         xbands = d3.scale.ordinal()
                 .domain(d3.range(200))
-                .rangeRoundBands([0, @options.width], 0)
+                .rangeRoundBands([0, @chartwidth], 0)
 
         svg = d3.select(@$el[0])
         g = svg.select('svg>g')
 
 
-        # mouseover = () ->
-        #     mousemove(this)
-
         mousemove = () ->
-            set_hoverindex(d3.mouse(this)[0])
+            val = d3.mouse(this)[0]
+            if val > 199
+                val = 199
+            if val < 0
+                val = 0
+            console.log(val)
+            set_hoverindex(val)
 
         mouseout = () ->
+            console.log("mouseout!")
             set_hoverindex(null)
-            # @options.hoverindex = null
-            # g.selectAll('.hoverindex')
-            #     .transition()
-            #     .duration(50)
-            #     .attr('r', 0)
-            #     .attr('opacity', 0)
-            #     .remove()
 
         set_hoverindex = (index) =>
             @options.chartgroup.sethoverindex(index)
             # render_hoverindex()
 
-        # render_hoverindex = () =>
-        #     if @options.hoverindex?
-        #         val = @options.data[@options.hoverindex][@options.key]
-        #         if val == 0
-        #             val = 0.1
-        #         g.append('circle')
-        #             .attr('class', 'hoverindex')
-        #             .attr('cx', x(@options.hoverindex))
-        #             .attr('cy', ylog(val))
-        #             .attr('r', 3)
-        #             .transition()
-        #             .duration(50)
-        #             .attr('r', 5)
-
-
 
         # svg.on('mouseover', mouseover)
-        svg.on('mousemove', mousemove)
-        svg.on('mouseout', mouseout)
-
-        # render_hoverindex()
-
+        g.on('mousemove', mousemove, true)
+        @$el.on('mouseleave', mouseout)
+        # svg.on('mouseout', mouseout, true)
 
 
 
-        # # points
-        # # join
-        # points = svg.selectAll('.point')
-        #     .data(@options.data)
-
-        # # update
-        # # enter
-        # points.enter().append('circle')
-        #     .attr('data-lang', @options.languages)
-        #     .on('mouseover', (d,i) =>
-        #         console.log("#{d.language} #{d.rank} #{d.user}/#{d.name} #{d[@options.key]}")
-        #         )
-
-
-        # # enter+update
-        # points.attr('class', 'point')
-        #     .transition()
-        #     .attr('r', 2)
-        #     .attr('cx', (d,i) -> x(d.rank))
-        #     .attr('cy', (d,i) => y(d[@options.key]))
-
-        # # exit
+        # join, update, enter, enter+update, exit
 
 
         # bars
@@ -412,68 +379,32 @@ class D3LanguageChart extends Backbone.View
                 console.log("#{d.language} #{d.rank} #{d.user}/#{d.name} #{d[@options.key]}")
                 )
 
-
         bars.attr('class', 'bar')
             .attr('data-lang', @options.language)
-            .transition()
             .attr('x', (d) -> xbands(d.rank))
+            .attr('width', xbands.rangeBand())
+            .attr('y', @chartheight)
+            .attr('height': 0)
+            .transition()
             .attr('y', (d) =>
                 val = d[@options.key]
                 if val == 0
                     val = 0.1
                 return ylog(val))
-            .attr('width', xbands.rangeBand())
             .attr('height', (d) =>
                 val = d[@options.key]
                 if val == 0
                     val = 0.1
                 return @chartheight - ylog(val))
 
-        baseline = g.append('rect')
+        # add baseline
+        g.append('rect')
             .attr('class', 'baseline')
             .attr('x', 0)
             .attr('y', @chartheight-1)
-            .attr('width', @options.width)
+            .attr('width', @chartwidth)
             .attr('height', 1)
 
-
-
-
-        logline = d3.svg.line()
-                .x((d,i) => return x(d.rank))
-                .y((d) =>
-                    val = d[@options.key]
-                    if val == 0
-                        val = zeroish
-                    return ylog(val))
-
-
-        logarea = d3.svg.area()
-                .x((d) => return x(d.rank))
-                .y0(@chartheight)
-                .y1((d) =>
-                    val = d[@options.key]
-                    if val == 0
-                        val = zeroish
-                    return ylog(val))
-
-
-        area = d3.svg.area()
-                # .interpolate('basis')
-                .x((d) => return x(d.rank))
-                .y0(@chartheight)
-                .y1((d) => return y(d[@options.key]))
-
-        # areapath = g.append('path')
-        #     .datum(@options.data)
-        #     .attr('class', 'areapath')
-        #     .attr('data-lang', @options.language)
-        #     .attr('d', logarea)
-
-        # topline = svg.append('path')
-        #     .datum(@options.data)
-        #     .attr('class', 'topline')
-        #     .attr('d', logline)
         return @
 
 
