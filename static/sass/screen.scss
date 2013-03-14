@@ -305,6 +305,17 @@ a.chordlang {
 }
 
 
+
+
+
+@mixin language_link($color) {
+    background-color: $color;
+    @include transition(background-color 0.1s linear);
+    &:hover {
+        background-color: lighten($color, 10%);
+    }
+}
+
 .all_languages {
     .vis {
         @include clearfix;
@@ -320,11 +331,29 @@ a.chordlang {
                 color: $color-asbestos;
                 border-top: 1px solid $color-silver;
                 font-size: 0.85em;
+                padding-top: 0;
+                margin-top: 0;
             }
             .topline {
                 fill: none;
                 stroke-width: 1;
                 stroke: $color-pomegranate;
+            }
+            .areapath, .bar {
+                &[data-lang="JavaScript"] { fill: $color-belize-hole; }
+                &[data-lang="Ruby"] { fill: $color-alizarin; }
+                &[data-lang="Java"] { fill: $color-turquoise; }
+                &[data-lang="Python"] { fill: $color-nephritis; }
+                &[data-lang="Shell"] { fill: $color-wisteria; }
+                &[data-lang="PHP"] { fill: $color-peter-river; }
+                &[data-lang="C"] { fill: $color-sunflower; }
+                &[data-lang="C++"] { fill: $color-orange; }
+                &[data-lang="Perl"] { fill: $color-pomegranate; }
+                &[data-lang="Objective-C"] { fill: $color-carrot; }
+                // fill: $color-peter-river;
+                // stroke: $color-belize-hole;
+                // stroke-width: 1;
+
             }
         }
     }
