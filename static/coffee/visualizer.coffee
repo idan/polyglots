@@ -478,6 +478,9 @@ $ ->
 
             root.Polyglots.repos = repos
             root.Polyglots.fieldmap = fieldmap
+            $(".chzn-select").chosen().on('change', () ->
+                root.Polyglots.langcharts.setKey(this.value)
+            )
         )
 
     )
