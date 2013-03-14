@@ -216,7 +216,8 @@
 
     D3LanguageCharts.prototype.defaults = {
       key: 'contributor_count',
-      hoverindex: null
+      hoverindex: null,
+      yScale: 'linear'
     };
 
     D3LanguageCharts.prototype.initialize = function() {
@@ -239,10 +240,13 @@
           fieldmap: this.options.fieldmap,
           id: "langchart_" + lang,
           key: this.options.key,
+          yScale: this.options.yScale,
+          hoverindex: this.options.hoverindex,
           chartgroup: this
         });
         chart.listenTo(this, 'langchart:keychanged', chart.setKey);
         chart.listenTo(this, 'langchart:hoverindexchanged', chart.sethoverindex);
+        chart.listenTo(this, 'langchart:yscalechanged', chart.setyScale);
         this.$el.append(chart.el);
         this.charts.push(chart);
       }
@@ -260,6 +264,11 @@
     D3LanguageCharts.prototype.sethoverindex = function(index) {
       this.options.hoverindex = index;
       return this.trigger('langchart:hoverindexchanged', this.options.hoverindex);
+    };
+
+    D3LanguageCharts.prototype.setyScale = function(scaletype) {
+      this.options.yScale = scaletype;
+      return this.trigger('langchart:yscalechanged', this.options.yScale);
     };
 
     return D3LanguageCharts;
@@ -282,6 +291,7 @@
       paddingY: 5,
       paddingX: 5,
       key: 'contributor_count',
+      yScale: 'linear',
       hoverindex: null,
       chartgroup: null
     };
@@ -305,22 +315,61 @@
       return this.renderhoverindex();
     };
 
+    D3LanguageChart.prototype.setyScale = function(scaletype) {
+      this.options.yScale = scaletype;
+      return this.render();
+    };
+
     D3LanguageChart.prototype.setup = function() {
       d3.selectAll(this.$el).append("svg").attr("width", this.options.width).attr("height", this.options.height).append('g').attr("transform", "translate(" + this.options.paddingX + "," + this.options.paddingY + ")");
       this.render();
       return this;
     };
 
-    D3LanguageChart.prototype.renderhoverindex = function() {
-      var extents, g, marker, svg, val, x, ylog;
-      extents = _.findWhere(this.options.fieldmap, {
+    D3LanguageChart.prototype.prepscales = function() {
+      var scales,
+        _this = this;
+      scales = {};
+      scales.extents = _.findWhere(this.options.fieldmap, {
         'name': this.options.key
       }).extents;
+      scales.x = d3.scale.linear().domain([0, 199]).range([0, this.chartwidth]);
+      scales.xbands = d3.scale.ordinal().domain(d3.range(200)).rangeRoundBands([0, this.chartwidth], 0);
+      if (this.options.yScale === 'linear') {
+        scales.y = d3.scale.linear().domain(scales.extents).range([this.chartheight, 0]);
+        scales.yposition = function(d) {
+          return scales.y(d[_this.options.key]);
+        };
+        scales.yheight = function(d) {
+          return _this.chartheight - scales.y(d[_this.options.key]);
+        };
+      } else if (this.options.yScale === 'log') {
+        scales.y = d3.scale.log().domain([logzero, scales.extents[1]]).range([this.chartheight, 0]).clamp(true);
+        scales.yposition = function(d) {
+          var val;
+          val = d[_this.options.key];
+          if (val === 0) {
+            val = logzero;
+          }
+          return scales.y(val);
+        };
+        scales.yheight = function(d) {
+          var val;
+          val = d[_this.options.key];
+          if (val === 0) {
+            val = logzero;
+          }
+          return _this.chartheight - scales.y(val);
+        };
+      }
+      return scales;
+    };
+
+    D3LanguageChart.prototype.renderhoverindex = function() {
+      var g, marker, scales, svg, val;
+      scales = this.prepscales();
       svg = d3.select(this.$el[0]);
       g = svg.select('svg>g');
-      ylog = d3.scale.log().domain([logzero, extents[1]]).range([this.chartheight, 0]).clamp(true);
-      x = d3.scale.linear().domain([0, 199]).range([0, this.chartwidth]);
-      console.log("Render Hover Index: " + this.options.language + " / " + this.options.hoverindex);
       if (this.options.hoverindex != null) {
         val = this.options.data[this.options.hoverindex][this.options.key];
         if (val === 0) {
@@ -331,22 +380,16 @@
           marker = g.append('circle').attr('class', 'hoverindex');
           marker.attr('r', 3).transition().duration(100).attr('r', 5);
         }
-        return marker.attr('cx', x(this.options.hoverindex)).attr('cy', ylog(val));
+        return marker.attr('cx', scales.x(this.options.hoverindex)).attr('cy', scales.y(val));
       } else {
         return g.selectAll('.hoverindex').remove();
       }
     };
 
     D3LanguageChart.prototype.render = function() {
-      var bars, extents, g, mousemove, mouseout, set_hoverindex, svg, x, xbands, y, ylog,
+      var bars, g, mousemove, mouseout, scales, set_hoverindex, svg,
         _this = this;
-      extents = _.findWhere(this.options.fieldmap, {
-        'name': this.options.key
-      }).extents;
-      y = d3.scale.linear().domain(extents).range([this.chartheight, 0]);
-      ylog = d3.scale.log().domain([logzero, extents[1]]).range([this.chartheight, 0]).clamp(true);
-      x = d3.scale.linear().domain([0, 199]).range([0, this.chartwidth]);
-      xbands = d3.scale.ordinal().domain(d3.range(200)).rangeRoundBands([0, this.chartwidth], 0);
+      scales = this.prepscales();
       svg = d3.select(this.$el[0]);
       g = svg.select('svg>g');
       mousemove = function() {
@@ -358,11 +401,9 @@
         if (val < 0) {
           val = 0;
         }
-        console.log(val);
         return set_hoverindex(val);
       };
       mouseout = function() {
-        console.log("mouseout!");
         return set_hoverindex(null);
       };
       set_hoverindex = function(index) {
@@ -371,28 +412,12 @@
       g.on('mousemove', mousemove, true);
       this.$el.on('mouseleave', mouseout);
       bars = g.selectAll('.bar').data(this.options.data);
-      bars.enter().append('rect').on('mouseover', function(d, i) {
-        return console.log("" + d.language + " " + d.rank + " " + d.user + "/" + d.name + " " + d[_this.options.key]);
+      bars.enter().append('rect').attr('data-lang', this.options.language).attr('class', 'bar').attr('x', function(d) {
+        return scales.xbands(d.rank);
+      }).attr('width', scales.xbands.rangeBand()).attr('y', this.chartheight).attr({
+        'height': zeroish
       });
-      bars.attr('class', 'bar').attr('data-lang', this.options.language).attr('x', function(d) {
-        return xbands(d.rank);
-      }).attr('width', xbands.rangeBand()).attr('y', this.chartheight).attr({
-        'height': 0
-      }).transition().attr('y', function(d) {
-        var val;
-        val = d[_this.options.key];
-        if (val === 0) {
-          val = logzero;
-        }
-        return ylog(val);
-      }).attr('height', function(d) {
-        var val;
-        val = d[_this.options.key];
-        if (val === 0) {
-          val = logzero;
-        }
-        return _this.chartheight - ylog(val);
-      });
+      bars.transition().attr('y', scales.yposition).attr('height', scales.yheight);
       g.append('rect').attr('class', 'baseline').attr('x', 0).attr('y', this.chartheight - 1).attr('width', this.chartwidth).attr('height', 1);
       return this;
     };
@@ -443,13 +468,16 @@
           }
           return _results;
         });
-        root.langcharts = new D3LanguageCharts({
+        if (!(root.Polyglots != null)) {
+          root.Polyglots = {};
+        }
+        root.Polyglots.langcharts = new D3LanguageCharts({
           data: repos,
           fieldmap: fieldmap,
           el: $(".all_languages>.vis")
         });
-        root.repos = repos;
-        return root.fieldmap = fieldmap;
+        root.Polyglots.repos = repos;
+        root.Polyglots.fieldmap = fieldmap;
       });
     });
     return $('a.chordlang').on('click', function(event) {

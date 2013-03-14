@@ -211,6 +211,7 @@ class D3LanguageCharts extends Backbone.View
     defaults: {
         key: 'contributor_count',
         hoverindex: null,
+        yScale: 'linear'
     }
 
     initialize: ->
@@ -228,9 +229,12 @@ class D3LanguageCharts extends Backbone.View
                 fieldmap: @options.fieldmap,
                 id: "langchart_#{lang}",
                 key: @options.key,
+                yScale: @options.yScale,
+                hoverindex: @options.hoverindex
                 chartgroup: @})
             chart.listenTo(@, 'langchart:keychanged', chart.setKey)
             chart.listenTo(@, 'langchart:hoverindexchanged', chart.sethoverindex)
+            chart.listenTo(@, 'langchart:yscalechanged', chart.setyScale)
             @$el.append(chart.el)
             @charts.push(chart)
         root.charts = @charts
@@ -246,6 +250,10 @@ class D3LanguageCharts extends Backbone.View
         @options.hoverindex = index
         @trigger('langchart:hoverindexchanged', @options.hoverindex)
 
+    setyScale: (scaletype) ->
+        @options.yScale = scaletype
+        @trigger('langchart:yscalechanged', @options.yScale)
+
 
 
 class D3LanguageChart extends Backbone.View
@@ -257,6 +265,7 @@ class D3LanguageChart extends Backbone.View
         paddingY: 5,
         paddingX: 5,
         key: 'contributor_count',
+        yScale: 'linear'
         hoverindex: null,
         chartgroup: null,
         # gutterwidth: 10, # width between charts
@@ -279,6 +288,10 @@ class D3LanguageChart extends Backbone.View
         @options.hoverindex = index
         @renderhoverindex()
 
+    setyScale: (scaletype) ->
+        @options.yScale = scaletype
+        @render()
+
     setup: ->
         d3.selectAll(@$el).append("svg")
             .attr("width", @options.width)
@@ -288,19 +301,60 @@ class D3LanguageChart extends Backbone.View
         @render()
         return @
 
-    renderhoverindex: ->
-        extents = _.findWhere(@options.fieldmap, {'name': @options.key}).extents
-        svg = d3.select(@$el[0])
-        g = svg.select('svg>g')
-        ylog = d3.scale.log()
-                .domain([logzero, extents[1]])
-                .range([@chartheight, 0])
-                .clamp(true)
-        x = d3.scale.linear()
+    prepscales: ->
+        # prepare the various scales
+        scales = {}
+        scales.extents = _.findWhere(@options.fieldmap,
+                                   {'name': @options.key}).extents
+
+
+        scales.x = d3.scale.linear()
                 .domain([0,199])
                 .range([0,@chartwidth])
 
-        console.log("Render Hover Index: #{@options.language} / #{@options.hoverindex}")
+        scales.xbands = d3.scale.ordinal()
+                .domain(d3.range(200))
+                .rangeRoundBands([0, @chartwidth], 0)
+
+
+        if @options.yScale == 'linear'
+            scales.y = d3.scale.linear()
+                    .domain(scales.extents)
+                    .range([@chartheight, 0])
+
+            scales.yposition = (d) =>
+                scales.y(d[@options.key])
+
+            scales.yheight = (d) =>
+                @chartheight - scales.y(d[@options.key])
+
+        else if @options.yScale == 'log'
+            scales.y = d3.scale.log()
+                .domain([logzero, scales.extents[1]])
+                .range([@chartheight, 0])
+                .clamp(true)
+
+            scales.yposition = (d) =>
+                val = d[@options.key]
+                if val == 0
+                    val = logzero
+                return scales.y(val)
+
+            scales.yheight = (d) =>
+                val = d[@options.key]
+                if val == 0
+                    val = logzero
+                return @chartheight - scales.y(val)
+
+        return scales
+
+
+
+    renderhoverindex: ->
+        scales = @prepscales()
+        svg = d3.select(@$el[0])
+        g = svg.select('svg>g')
+
         if @options.hoverindex?
             val = @options.data[@options.hoverindex][@options.key]
             if val == 0
@@ -316,36 +370,20 @@ class D3LanguageChart extends Backbone.View
                 .attr('r', 5)
 
             marker
-                .attr('cx', x(@options.hoverindex))
-                .attr('cy', ylog(val))
+                .attr('cx', scales.x(@options.hoverindex))
+                .attr('cy', scales.y(val))
 
         else
             # leaving the chart, get rid of the dot
             g.selectAll('.hoverindex').remove()
 
     render: ->
-        extents = _.findWhere(@options.fieldmap, {'name': @options.key}).extents
-        y = d3.scale.linear()
-                .domain(extents)
-                .range([@chartheight, 0])
-
-
-        ylog = d3.scale.log()
-                .domain([logzero, extents[1]])
-                .range([@chartheight, 0])
-                .clamp(true)
-
-        x = d3.scale.linear()
-                .domain([0,199])
-                .range([0,@chartwidth])
-
-        xbands = d3.scale.ordinal()
-                .domain(d3.range(200))
-                .rangeRoundBands([0, @chartwidth], 0)
-
+        scales = @prepscales()
         svg = d3.select(@$el[0])
         g = svg.select('svg>g')
 
+
+        # event handling
 
         mousemove = () ->
             val = d3.mouse(this)[0]
@@ -353,54 +391,41 @@ class D3LanguageChart extends Backbone.View
                 val = 199
             if val < 0
                 val = 0
-            console.log(val)
             set_hoverindex(val)
 
         mouseout = () ->
-            console.log("mouseout!")
             set_hoverindex(null)
 
         set_hoverindex = (index) =>
             @options.chartgroup.sethoverindex(index)
             # render_hoverindex()
 
-
-        # svg.on('mouseover', mouseover)
         g.on('mousemove', mousemove, true)
+
+        # mouseout is bad because of bubbling events.
+        # TODO: how do we fix so we don't get triggered mouseout when moving
+        #       between bars? For now jQuery's mouseleave is a fix.
         @$el.on('mouseleave', mouseout)
-        # svg.on('mouseout', mouseout, true)
-
-
-
-        # join, update, enter, enter+update, exit
 
 
         # bars
+        # join
         bars = g.selectAll('.bar')
             .data(@options.data)
 
+        # enter
         bars.enter().append('rect')
-            .on('mouseover', (d,i) =>
-                console.log("#{d.language} #{d.rank} #{d.user}/#{d.name} #{d[@options.key]}")
-                )
-
-        bars.attr('class', 'bar')
             .attr('data-lang', @options.language)
-            .attr('x', (d) -> xbands(d.rank))
-            .attr('width', xbands.rangeBand())
+            .attr('class', 'bar')
+            .attr('x', (d) -> scales.xbands(d.rank))
+            .attr('width', scales.xbands.rangeBand())
             .attr('y', @chartheight)
-            .attr('height': 0)
-            .transition()
-            .attr('y', (d) =>
-                val = d[@options.key]
-                if val == 0
-                    val = logzero
-                return ylog(val))
-            .attr('height', (d) =>
-                val = d[@options.key]
-                if val == 0
-                    val = logzero
-                return @chartheight - ylog(val))
+            .attr('height': zeroish)
+
+        # update
+        bars.transition()
+            .attr('y', scales.yposition)
+            .attr('height', scales.yheight)
 
         # add baseline
         g.append('rect')
@@ -444,12 +469,15 @@ $ ->
                         r[prop] = Date(0)
             )
 
-            root.langcharts = new D3LanguageCharts({
+            if not root.Polyglots?
+                root.Polyglots = {}
+            root.Polyglots.langcharts = new D3LanguageCharts({
                 data: repos,
                 fieldmap: fieldmap,
                 el: $(".all_languages>.vis")})
-            root.repos = repos
-            root.fieldmap = fieldmap
+
+            root.Polyglots.repos = repos
+            root.Polyglots.fieldmap = fieldmap
         )
 
     )
