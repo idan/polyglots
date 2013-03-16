@@ -338,7 +338,7 @@
       scales.x = d3.scale.linear().domain([0, 199]).range([0, this.chartwidth]);
       scales.xbands = d3.scale.ordinal().domain(d3.range(200)).rangeRoundBands([0, this.chartwidth], 0);
       if (this.options.yScale === 'linear') {
-        scales.y = d3.scale.linear().domain(scales.extents).range([this.chartheight, 0]);
+        scales.y = d3.scale.linear().domain(scales.extents).range([this.chartheight, 0]).clamp(true);
         scales.yposition = function(d) {
           return scales.y(d[_this.options.key]);
         };

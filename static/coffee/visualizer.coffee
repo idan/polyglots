@@ -325,6 +325,7 @@ class D3LanguageChart extends Backbone.View
             scales.y = d3.scale.linear()
                     .domain(scales.extents)
                     .range([@chartheight, 0])
+                    .clamp(true)
 
             scales.yposition = (d) =>
                 scales.y(d[@options.key])
