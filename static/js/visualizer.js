@@ -402,12 +402,13 @@
       };
       set_hoverindex = function(xcoord) {
         var val;
-        val = xcoord - _this.options.paddingX;
-        if (val > 199) {
-          val = 199;
-        }
-        if (val < 0) {
-          val = 0;
+          val = xcoord - _this.options.paddingX;
+          if (val > 199) {
+            val = 199;
+          }
+          if (val < 0) {
+            val = 0;
+          }
         }
         return _this.options.chartgroup.sethoverindex(val);
       };

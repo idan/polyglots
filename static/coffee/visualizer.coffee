@@ -397,11 +397,12 @@ class D3LanguageChart extends Backbone.View
             set_hoverindex(null)
 
         set_hoverindex = (xcoord) =>
-            val = xcoord - @options.paddingX
-            if val > 199
-                val = 199
-            if val < 0
-                val = 0
+            if xcoord?
+                val = xcoord - @options.paddingX
+                if val > 199
+                    val = 199
+                if val < 0
+                    val = 0
             @options.chartgroup.sethoverindex(val)
 
         svg.on('mousemove', mousemove, true)
