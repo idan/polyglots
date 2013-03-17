@@ -481,7 +481,7 @@
         });
         root.Polyglots.repos = repos;
         root.Polyglots.fieldmap = fieldmap;
-        return $(".chzn-select").chosen().on('change', function() {
+        return $("#language_metrics").on('change', function() {
           return root.Polyglots.langcharts.setKey(this.value);
         });
       });
