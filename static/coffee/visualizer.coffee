@@ -209,7 +209,7 @@ chord_diagram = (prefix, el, data, opts) ->
 
 class D3LanguageCharts extends Backbone.View
     defaults: {
-        key: 'contributor_count',
+        key: 'watchers_count',
         hoverindex: null,
         yScale: 'linear'
     }
@@ -266,7 +266,7 @@ class D3LanguageChart extends Backbone.View
         paddingTop: 5,
         paddingBottom: 20,
         paddingX: 5,
-        key: 'contributor_count',
+        key: 'watchers_count',
         yScale: 'linear'
         hoverindex: null,
         chartgroup: null,

@@ -215,7 +215,7 @@
     }
 
     D3LanguageCharts.prototype.defaults = {
-      key: 'contributor_count',
+      key: 'watchers_count',
       hoverindex: null,
       yScale: 'linear'
     };
@@ -292,7 +292,7 @@
       paddingTop: 5,
       paddingBottom: 20,
       paddingX: 5,
-      key: 'contributor_count',
+      key: 'watchers_count',
       yScale: 'linear',
       hoverindex: null,
       chartgroup: null
@@ -402,6 +402,7 @@
       };
       set_hoverindex = function(xcoord) {
         var val;
+        if (xcoord != null) {
           val = xcoord - _this.options.paddingX;
           if (val > 199) {
             val = 199;
