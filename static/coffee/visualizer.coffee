@@ -211,7 +211,6 @@ class D3LanguageCharts extends Backbone.View
     defaults: {
         key: 'watchers_count',
         hoverindex: null,
-        yScale: 'linear'
     }
 
     initialize: ->
@@ -234,7 +233,6 @@ class D3LanguageCharts extends Backbone.View
                 chartgroup: @})
             chart.listenTo(@, 'langchart:keychanged', chart.setKey)
             chart.listenTo(@, 'langchart:hoverindexchanged', chart.sethoverindex)
-            chart.listenTo(@, 'langchart:yscalechanged', chart.setyScale)
             @$el.append(chart.el)
             @charts.push(chart)
         root.charts = @charts
@@ -250,10 +248,6 @@ class D3LanguageCharts extends Backbone.View
         @options.hoverindex = index
         @trigger('langchart:hoverindexchanged', @options.hoverindex)
 
-    setyScale: (scaletype) ->
-        @options.yScale = scaletype
-        @trigger('langchart:yscalechanged', @options.yScale)
-
 
 
 class D3LanguageChart extends Backbone.View
@@ -267,7 +261,6 @@ class D3LanguageChart extends Backbone.View
         paddingBottom: 20,
         paddingX: 5,
         key: 'watchers_count',
-        yScale: 'linear'
         hoverindex: null,
         chartgroup: null,
         # gutterwidth: 10, # width between charts
@@ -291,10 +284,6 @@ class D3LanguageChart extends Backbone.View
     sethoverindex: (index) ->
         @options.hoverindex = index
         @renderhoverindex()
-
-    setyScale: (scaletype) ->
-        @options.yScale = scaletype
-        @render()
 
     setup: ->
         d3.selectAll(@$el).append("svg")
@@ -320,36 +309,16 @@ class D3LanguageChart extends Backbone.View
                 .domain(d3.range(200))
                 .rangeRoundBands([0, @chartwidth], 0)
 
-
-        if @options.yScale == 'linear'
-            scales.y = d3.scale.linear()
-                    .domain(scales.extents)
-                    .range([@chartheight, 0])
-                    .clamp(true)
-
-            scales.yposition = (d) =>
-                scales.y(d[@options.key])
-
-            scales.yheight = (d) =>
-                @chartheight - scales.y(d[@options.key])
-
-        else if @options.yScale == 'log'
-            scales.y = d3.scale.log()
-                .domain([logzero, scales.extents[1]])
+        scales.y = d3.scale.linear()
+                .domain(scales.extents)
                 .range([@chartheight, 0])
                 .clamp(true)
 
-            scales.yposition = (d) =>
-                val = d[@options.key]
-                if val == 0
-                    val = logzero
-                return scales.y(val)
+        scales.yposition = (d) =>
+            scales.y(d[@options.key])
 
-            scales.yheight = (d) =>
-                val = d[@options.key]
-                if val == 0
-                    val = logzero
-                return @chartheight - scales.y(val)
+        scales.yheight = (d) =>
+            @chartheight - scales.y(d[@options.key])
 
         return scales
 

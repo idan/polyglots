@@ -216,8 +216,7 @@
 
     D3LanguageCharts.prototype.defaults = {
       key: 'watchers_count',
-      hoverindex: null,
-      yScale: 'linear'
+      hoverindex: null
     };
 
     D3LanguageCharts.prototype.initialize = function() {
@@ -246,7 +245,6 @@
         });
         chart.listenTo(this, 'langchart:keychanged', chart.setKey);
         chart.listenTo(this, 'langchart:hoverindexchanged', chart.sethoverindex);
-        chart.listenTo(this, 'langchart:yscalechanged', chart.setyScale);
         this.$el.append(chart.el);
         this.charts.push(chart);
       }
@@ -264,11 +262,6 @@
     D3LanguageCharts.prototype.sethoverindex = function(index) {
       this.options.hoverindex = index;
       return this.trigger('langchart:hoverindexchanged', this.options.hoverindex);
-    };
-
-    D3LanguageCharts.prototype.setyScale = function(scaletype) {
-      this.options.yScale = scaletype;
-      return this.trigger('langchart:yscalechanged', this.options.yScale);
     };
 
     return D3LanguageCharts;
@@ -293,7 +286,6 @@
       paddingBottom: 20,
       paddingX: 5,
       key: 'watchers_count',
-      yScale: 'linear',
       hoverindex: null,
       chartgroup: null
     };
@@ -317,11 +309,6 @@
       return this.renderhoverindex();
     };
 
-    D3LanguageChart.prototype.setyScale = function(scaletype) {
-      this.options.yScale = scaletype;
-      return this.render();
-    };
-
     D3LanguageChart.prototype.setup = function() {
       d3.selectAll(this.$el).append("svg").attr("width", this.options.width).attr("height", this.options.height).append('g').attr("transform", "translate(" + this.options.paddingX + "," + this.options.paddingY + ")");
       this.render();
@@ -337,33 +324,13 @@
       }).extents;
       scales.x = d3.scale.linear().domain([0, 199]).range([0, this.chartwidth]);
       scales.xbands = d3.scale.ordinal().domain(d3.range(200)).rangeRoundBands([0, this.chartwidth], 0);
-      if (this.options.yScale === 'linear') {
-        scales.y = d3.scale.linear().domain(scales.extents).range([this.chartheight, 0]).clamp(true);
-        scales.yposition = function(d) {
-          return scales.y(d[_this.options.key]);
-        };
-        scales.yheight = function(d) {
-          return _this.chartheight - scales.y(d[_this.options.key]);
-        };
-      } else if (this.options.yScale === 'log') {
-        scales.y = d3.scale.log().domain([logzero, scales.extents[1]]).range([this.chartheight, 0]).clamp(true);
-        scales.yposition = function(d) {
-          var val;
-          val = d[_this.options.key];
-          if (val === 0) {
-            val = logzero;
-          }
-          return scales.y(val);
-        };
-        scales.yheight = function(d) {
-          var val;
-          val = d[_this.options.key];
-          if (val === 0) {
-            val = logzero;
-          }
-          return _this.chartheight - scales.y(val);
-        };
-      }
+      scales.y = d3.scale.linear().domain(scales.extents).range([this.chartheight, 0]).clamp(true);
+      scales.yposition = function(d) {
+        return scales.y(d[_this.options.key]);
+      };
+      scales.yheight = function(d) {
+        return _this.chartheight - scales.y(d[_this.options.key]);
+      };
       return scales;
     };
 
