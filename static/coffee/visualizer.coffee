@@ -67,7 +67,7 @@ chord_diagram = (prefix, el, data, opts) ->
     outerRadius = Math.min(opts.width, opts.height) / 2 - 25
     innerRadius = outerRadius - 24
 
-    formatPercent = d3.format(".1%")
+    
 
     arc = d3.svg.arc()
         .innerRadius(innerRadius)
@@ -154,9 +154,6 @@ chord_diagram = (prefix, el, data, opts) ->
                 return languages[d.source.index].color
         )
         .attr("d", path);
-
-    # # Add an elaborate mouseover title for each chord.
-    # chord.append("title").text((d) -> return languages[d.source.index].name)
 
     if opts.lang?
         rank = get_language_rank(opts.lang)
@@ -258,7 +255,7 @@ class D3LanguageChart extends Backbone.View
         height: 250,
         paddingY: 5,
         paddingTop: 5,
-        paddingBottom: 20,
+        paddingBottom: 0,
         paddingX: 5,
         key: 'watchers_count',
         hoverindex: null,
@@ -270,10 +267,11 @@ class D3LanguageChart extends Backbone.View
         @options = _.defaults(@options, @defaults)
         _.bindAll(@)
         @chartheight = @options.height -
-                       @options.paddingTop - 
+                       @options.paddingTop -
                        @options.paddingBottom - 1
         @chartwidth = @options.width - (2 * @options.paddingX)
         @setup()
+        @$el.append("<p class=\"hoverinfo\"></p>")
         @$el.append("<p class=\"name\">#{@options.language}</p>")
 
 
@@ -326,30 +324,38 @@ class D3LanguageChart extends Backbone.View
 
     renderhoverindex: ->
         scales = @prepscales()
+        hoverinfo = @$el.children('.hoverinfo')
         svg = d3.select(@$el[0])
         g = svg.select('svg>g')
 
         if @options.hoverindex?
+            line = @options.data[@options.hoverindex]
             val = @options.data[@options.hoverindex][@options.key]
+            hoverinfo.html("#{line.user}/#{line.name}")
             if val == 0
                 val = logzero
             marker = g.selectAll('.hoverindex')
-
             if marker[0].length == 0
                 # create the marker
                 marker = g.append('circle').attr('class', 'hoverindex')
                 marker.attr('r', 4)
-                # .transition()
-                # .duration(100)
-                # .attr('r', 5)
 
             marker
                 .attr('cx', scales.x(@options.hoverindex))
                 .attr('cy', scales.y(val))
 
+
+            hovertext = g.selectAll('.hovertext')
+            if hovertext[0].length == 0
+                # create the text
+                hovertext = g.append('text').attr('class', 'hovertext')
+
+
         else
             # leaving the chart, get rid of the dot
             g.selectAll('.hoverindex').remove()
+            g.selectAll('.hovertext').remove()
+            hoverinfo.empty()
 
     render: ->
         scales = @prepscales()

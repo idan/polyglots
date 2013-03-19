@@ -114,11 +114,10 @@
   };
 
   chord_diagram = function(prefix, el, data, opts) {
-    var arc, chord, formatPercent, group, groupPath, groupText, groupTicks, innerRadius, layout, mouseout, mouseover, outerRadius, path, rank, svg, ticks;
+    var arc, chord, group, groupPath, groupText, groupTicks, innerRadius, layout, mouseout, mouseover, outerRadius, path, rank, svg, ticks;
     opts = _.defaults(opts || {}, chord_defaults);
     outerRadius = Math.min(opts.width, opts.height) / 2 - 25;
     innerRadius = outerRadius - 24;
-    formatPercent = d3.format(".1%");
     arc = d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius);
     layout = d3.layout.chord().padding(.04).sortSubgroups(d3.descending).sortChords(d3.ascending);
     path = d3.svg.chord().radius(innerRadius);
@@ -283,7 +282,7 @@
       height: 250,
       paddingY: 5,
       paddingTop: 5,
-      paddingBottom: 20,
+      paddingBottom: 0,
       paddingX: 5,
       key: 'watchers_count',
       hoverindex: null,
@@ -296,6 +295,7 @@
       this.chartheight = this.options.height - this.options.paddingTop - this.options.paddingBottom - 1;
       this.chartwidth = this.options.width - (2 * this.options.paddingX);
       this.setup();
+      this.$el.append("<p class=\"hoverinfo\"></p>");
       return this.$el.append("<p class=\"name\">" + this.options.language + "</p>");
     };
 
@@ -335,12 +335,15 @@
     };
 
     D3LanguageChart.prototype.renderhoverindex = function() {
-      var g, marker, scales, svg, val;
+      var g, hoverinfo, hovertext, line, marker, scales, svg, val;
       scales = this.prepscales();
+      hoverinfo = this.$el.children('.hoverinfo');
       svg = d3.select(this.$el[0]);
       g = svg.select('svg>g');
       if (this.options.hoverindex != null) {
+        line = this.options.data[this.options.hoverindex];
         val = this.options.data[this.options.hoverindex][this.options.key];
+        hoverinfo.html("" + line.user + "/" + line.name);
         if (val === 0) {
           val = logzero;
         }
@@ -349,9 +352,15 @@
           marker = g.append('circle').attr('class', 'hoverindex');
           marker.attr('r', 4);
         }
-        return marker.attr('cx', scales.x(this.options.hoverindex)).attr('cy', scales.y(val));
+        marker.attr('cx', scales.x(this.options.hoverindex)).attr('cy', scales.y(val));
+        hovertext = g.selectAll('.hovertext');
+        if (hovertext[0].length === 0) {
+          return hovertext = g.append('text').attr('class', 'hovertext');
+        }
       } else {
-        return g.selectAll('.hoverindex').remove();
+        g.selectAll('.hoverindex').remove();
+        g.selectAll('.hovertext').remove();
+        return hoverinfo.empty();
       }
     };
 
