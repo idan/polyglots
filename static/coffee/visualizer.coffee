@@ -402,7 +402,7 @@ class D3LanguageChart extends Backbone.View
             .attr('y', @chartheight)
             .attr('height': zeroish)
 
-        # update
+        # enter+update
         bars.transition()
             .attr('y', scales.yposition)
             .attr('height', scales.yheight)
